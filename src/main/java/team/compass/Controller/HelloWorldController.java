@@ -8,6 +8,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class HelloWorldController {
     @GetMapping("/hello")
     public String test() {
-        return "제로베이스 엄성준 2023 03 31 15:42분 테스트";
+        return "이은수 테스트";
     }
 }
