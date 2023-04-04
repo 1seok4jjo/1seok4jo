@@ -1,4 +1,4 @@
-package team.compass;
+package team.compass.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
