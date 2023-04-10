@@ -10,14 +10,14 @@ import team.compass.member.domain.User;
 import team.compass.member.dto.MemberRequestDto;
 import team.compass.member.dto.TokenDto;
 import team.compass.member.domain.RefreshToken;
-import team.compass.member.repository.MemberRepository;
 import team.compass.member.repository.RefreshTokenRepository;
+import team.compass.member.repository.UserRepository;
 
 @Service
 @RequiredArgsConstructor
-public class MemberService {
+public class UserService {
     private final PasswordEncoder passwordEncoder;
-    private final MemberRepository memberRepository;
+    private final UserRepository memberRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
 
