@@ -38,6 +38,7 @@ public class User implements UserDetails {
     private String emailAuthKey;
     @Column(name = "resetPasswordKey")
     private String resetPasswordKey;
+
     @Column(name = "kakaoId")
     private String kakaoId;
 
