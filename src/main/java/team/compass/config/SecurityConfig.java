@@ -9,11 +9,17 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import team.compass.member.config.JwtAuthenticationFilter;
+import team.compass.member.config.JwtSecurityConfig;
+import team.compass.member.config.JwtTokenProvider;
 
 @RequiredArgsConstructor
 @Configuration
 @EnableWebSecurity
-public class WebSecurityConfig {
+public class SecurityConfig {
+    private final JwtTokenProvider jwtTokenProvider;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -25,13 +31,19 @@ public class WebSecurityConfig {
         http
                 .httpBasic().disable()
                 .csrf().disable()
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/api/**")
-                .permitAll();
+                .antMatchers("/api/member/*")
+                .permitAll()
 
-//                .and()
+                .anyRequest().authenticated()
+                .and()
+                .apply(new JwtSecurityConfig(jwtTokenProvider));
+
+        http
+                .headers().frameOptions().sameOrigin();
 
         return http.build();
     }
