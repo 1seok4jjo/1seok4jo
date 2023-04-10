@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import team.compass.member.dto.MemberRequestDto;
 import team.compass.member.dto.TokenDto;
-import team.compass.member.domain.Member;
+import team.compass.member.domain.User;
 import team.compass.member.service.MemberService;
 
 @RequiredArgsConstructor
@@ -22,9 +22,9 @@ public class MemberController {
     public ResponseEntity<?> signup(
             @RequestBody MemberRequestDto.SignUp parameter
     ) {
-        Member member = memberService.signUp(parameter);
+        User user = memberService.signUp(parameter);
 
-        if(ObjectUtils.isEmpty(member)) {
+        if(ObjectUtils.isEmpty(user)) {
             return ResponseEntity.badRequest().body("회원가입 실패");
         }
 

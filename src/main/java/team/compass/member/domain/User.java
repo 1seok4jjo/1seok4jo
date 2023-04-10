@@ -19,14 +19,14 @@ import java.util.stream.Collectors;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "member")
-public class Member implements UserDetails {
+@Table(name = "user")
+public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "userId", nullable = false)
     private Integer userId;
 
-    @Column(name = "email")
+    @Column(name = "email", unique = true, nullable = false)
     private String email;
     @Column(name = "password", nullable = false)
     private String password;
@@ -84,8 +84,8 @@ public class Member implements UserDetails {
         return true;
     }
 
-    public static Member from(MemberRequestDto.SignUp parameter) {
-        return Member.builder()
+    public static User from(MemberRequestDto.SignUp parameter) {
+        return User.builder()
                 .email(parameter.getEmail().toLowerCase(Locale.ROOT))
                 .password(parameter.getPassword())
                 .nickName(parameter.getNickname())

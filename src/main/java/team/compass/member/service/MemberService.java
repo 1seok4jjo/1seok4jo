@@ -6,9 +6,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import team.compass.member.config.JwtTokenProvider;
+import team.compass.member.domain.User;
 import team.compass.member.dto.MemberRequestDto;
 import team.compass.member.dto.TokenDto;
-import team.compass.member.domain.Member;
 import team.compass.member.domain.RefreshToken;
 import team.compass.member.repository.MemberRepository;
 import team.compass.member.repository.RefreshTokenRepository;
@@ -22,7 +22,7 @@ public class MemberService {
     private final RefreshTokenRepository refreshTokenRepository;
 
 //    @Transactional
-    public Member signUp(MemberRequestDto.SignUp parameter) {
+    public User signUp(MemberRequestDto.SignUp parameter) {
         boolean existsByEmail = memberRepository.existsByEmail(parameter.getEmail());
 
         if(existsByEmail) {
@@ -31,28 +31,28 @@ public class MemberService {
 
         parameter.setPassword(passwordEncoder.encode(parameter.getPassword()));
 
-        Member member = memberRepository.save(MemberRequestDto.SignUp.toEntity(parameter));
+        User user = memberRepository.save(MemberRequestDto.SignUp.toEntity(parameter));
 
-        return member;
+        return user;
     }
 
 //    @Transactional
-//    public Member signIn(MemberRequestDto.SignIn parameter) {
+//    public User signIn(MemberRequestDto.SignIn parameter) {
     public TokenDto signIn(MemberRequestDto.SignIn parameter) {
-        Member member = memberRepository.findByEmail(parameter.getEmail())
+        User user = memberRepository.findByEmail(parameter.getEmail())
                 .orElseThrow(() -> new RuntimeException("해당 회원이 존재하지 않습니다."));
 
-        if(!passwordEncoder.matches(parameter.getPassword(), member.getPassword())) {
+        if(!passwordEncoder.matches(parameter.getPassword(), user.getPassword())) {
             throw new RuntimeException("비밀번호가 일치하지 않습니다.");
         }
 
-        String accessToken =  jwtTokenProvider.createAccessToken(member.getEmail(), member.getRoles());
-        String refreshToken = jwtTokenProvider.createAccessToken(member.getEmail(), member.getRoles());
+        String accessToken =  jwtTokenProvider.createAccessToken(user.getEmail(), user.getRoles());
+        String refreshToken = jwtTokenProvider.createAccessToken(user.getEmail(), user.getRoles());
 
 
         refreshTokenRepository.save(
                 RefreshToken.builder()
-                        .email(member.getEmail())
+                        .email(user.getEmail())
                         .refreshToken(refreshToken)
                         .build()
         );
@@ -88,11 +88,11 @@ public class MemberService {
         // 새로운 토큰 생성
         String email = jwtTokenProvider.getMemberEmailByToken(originAccessToken);
 
-        Member member = memberRepository.findByEmail(email)
+        User user = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("해당 유저 정보가 없습니다."));
 
-        String newAccessToken = jwtTokenProvider.createAccessToken(email, member.getRoles());
-        String newRefreshToken = jwtTokenProvider.createRefreshToken(email, member.getRoles());
+        String newAccessToken = jwtTokenProvider.createAccessToken(email, user.getRoles());
+        String newRefreshToken = jwtTokenProvider.createRefreshToken(email, user.getRoles());
 
         TokenDto tokenDto = jwtTokenProvider.createTokenDto(newAccessToken, newRefreshToken);
 

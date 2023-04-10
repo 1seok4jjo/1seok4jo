@@ -17,7 +17,7 @@ public class RefreshToken {
     private String refreshToken;
 
 //    @OneToOne(mappedBy = "refresh_token")
-//    private Member member;
+//    private User member;
 
     public void updateValue(String refreshToken) {
         this.refreshToken = refreshToken;

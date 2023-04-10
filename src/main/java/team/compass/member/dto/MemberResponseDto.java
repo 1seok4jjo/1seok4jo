@@ -1,7 +1,7 @@
 package team.compass.member.dto;
 
 import lombok.*;
-import team.compass.member.domain.Member;
+import team.compass.member.domain.User;
 
 @Getter
 @Setter
@@ -14,11 +14,11 @@ public class MemberResponseDto {
     private String nickName;
     private String accessToken;
 
-    public static MemberResponseDto to(Member member, String accessToken) {
+    public static MemberResponseDto to(User user, String accessToken) {
         return MemberResponseDto.builder()
-                .userId(member.getUserId())
-                .email(member.getEmail())
-                .nickName(member.getNickName())
+                .userId(user.getUserId())
+                .email(user.getEmail())
+                .nickName(user.getNickName())
                 .accessToken(accessToken)
                 .build();
     }

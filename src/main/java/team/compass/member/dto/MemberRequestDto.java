@@ -2,7 +2,7 @@ package team.compass.member.dto;
 
 import lombok.Builder;
 import lombok.Data;
-import team.compass.member.domain.Member;
+import team.compass.member.domain.User;
 
 import javax.validation.constraints.NotEmpty;
 
@@ -24,8 +24,8 @@ public class MemberRequestDto {
         @NotEmpty(message = "닉네임 입력은 필수입니다.")
         private String nickname;
 
-        public static Member toEntity(SignUp parameter) {
-            return Member.builder()
+        public static User toEntity(SignUp parameter) {
+            return User.builder()
                     .email(parameter.getEmail())
                     .password(parameter.getPassword())
                     .nickName(parameter.getNickname())
