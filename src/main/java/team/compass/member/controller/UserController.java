@@ -10,19 +10,19 @@ import org.springframework.web.bind.annotation.RestController;
 import team.compass.member.dto.MemberRequestDto;
 import team.compass.member.dto.TokenDto;
 import team.compass.member.domain.User;
-import team.compass.member.service.MemberService;
+import team.compass.member.service.UserService;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/member")
 @RestController
-public class MemberController {
-    private final MemberService memberService;
+public class UserController {
+    private final UserService userService;
 
     @PostMapping("/signup")
     public ResponseEntity<?> signup(
             @RequestBody MemberRequestDto.SignUp parameter
     ) {
-        User user = memberService.signUp(parameter);
+        User user = userService.signUp(parameter);
 
         if(ObjectUtils.isEmpty(user)) {
             return ResponseEntity.badRequest().body("회원가입 실패");
@@ -35,7 +35,7 @@ public class MemberController {
     public ResponseEntity<?> signin(
             @RequestBody MemberRequestDto.SignIn parameter
     ) {
-        TokenDto tokenDto = memberService.signIn(parameter);
+        TokenDto tokenDto = userService.signIn(parameter);
 
         return ResponseEntity.ok().body(tokenDto);
     }
