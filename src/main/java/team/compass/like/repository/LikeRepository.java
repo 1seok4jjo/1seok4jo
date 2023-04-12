@@ -1,10 +1,12 @@
 package team.compass.like.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.security.core.userdetails.User;
+
 import org.springframework.stereotype.Repository;
-import team.compass.post.entity.Likes;
-import team.compass.post.entity.Post;
+import team.compass.like.domain.Likes;
+import team.compass.member.domain.User;
+import team.compass.post.domain.Post;
+
 
 import java.util.Optional;
 

@@ -1,10 +1,11 @@
 package team.compass.post.dto;
 
+
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
-import team.compass.post.entity.Photo;
-import team.compass.post.entity.User;
-import team.compass.post.util.MultipartUtil;
+import team.compass.member.domain.User;
+import team.compass.photo.domain.Photo;
+import team.compass.photo.util.MultipartUtil;
 
 import java.time.LocalDateTime;
 
@@ -36,12 +37,11 @@ public class PhotoDto {
 
     public Photo toEntity(User user) {
         return Photo.builder()
-                .type(this.type)
-                .name(this.name)
-                .user(user)
-                .storeFileUrl(this.storeFileUrl)
-                .createdAt(LocalDateTime.now())
-                .build();
+            .type(this.type)
+            .name(this.name)
+            .user(user)
+            .storeFileUrl(this.storeFileUrl)
+            .createdAt(LocalDateTime.now())
+            .build();
     }
 }
-
