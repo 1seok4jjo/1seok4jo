@@ -1,27 +1,33 @@
 package team.compass.post.service;
 
+
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import team.compass.member.domain.User;
+import team.compass.photo.domain.Photo;
+import team.compass.photo.repository.PhotoRepository;
+import team.compass.photo.repository.PostPhotoRepository;
+import team.compass.photo.service.FileUploadService;
+import team.compass.post.domain.Post;
+import team.compass.post.domain.PostPhoto;
 import team.compass.post.dto.PhotoDto;
 import team.compass.post.dto.PostDto;
-import team.compass.post.entity.Photo;
-import team.compass.post.entity.Post;
-import team.compass.post.entity.PostPhoto;
-import team.compass.post.entity.User;
-import team.compass.post.repository.PhotoRepository;
-import team.compass.post.repository.PostPhotoRepository;
 import team.compass.post.repository.PostRepository;
+import team.compass.theme.domain.Theme;
+import team.compass.theme.repository.ThemeRepository;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+
 import java.util.stream.Collectors;
 
 @Service
-public class PostServiceImpl implements PostService{
+public class PostServiceImpl implements PostService {
 
     @Autowired
     private PostRepository postRepository;
@@ -29,13 +35,18 @@ public class PostServiceImpl implements PostService{
     @Autowired
     private FileUploadService fileUploadService;
 
-
     @Autowired
     private PhotoRepository photoRepository;
     @Autowired
     private PostPhotoRepository postPhotoRepository;
 
-    // 메인 페이지 select
+    @Autowired
+    private ThemeRepository themeRepository;
+
+    /**
+     * 메인페이지
+     * @return
+     */
     @Override
     public ResponseEntity<Object> mainPageSelect() {
         //좋아요 + post name
@@ -48,7 +59,7 @@ public class PostServiceImpl implements PostService{
         // 2  null
         // 3  3번글
         // 4 null
-        List<Long> postIdList = list.stream().map(Post::getId).collect(Collectors.toList());
+        List<Integer> postIdList = list.stream().map(Post::getId).collect(Collectors.toList());
         // postIdList에 대한 사진 정보, 조건문 in
         List<Post> listById = postRepository.findListById(postIdList);
         // postId 중복 제거
@@ -66,17 +77,18 @@ public class PostServiceImpl implements PostService{
             //4
             if (post1 != null) {
                 result.add(new PostDto(post.getId(), post.getLikes().size(),
-                        post1.getPhotos().stream().map(i -> i.getPhoto().getName()).collect(
-                                Collectors.toList()), post.getTitle(), post.getLocation(), post.getStartDate(),post.getEndDate()));
+                    post1.getPhotos().stream().map(i -> i.getPhoto().getName()).collect(
+                        Collectors.toList()), post.getTitle(), post.getLocation(), post.getStartDate(),
+                    post.getEndDate()));
             } else {
                 result.add(new PostDto(
-                        post.getId(),
-                        post.getLikes().size(),
-                        null,
-                        post.getTitle(),
-                        post.getLocation(),
-                        post.getStartDate(),
-                        post.getEndDate())
+                    post.getId(),
+                    post.getLikes().size(),
+                    null,
+                    post.getTitle(),
+                    post.getLocation(),
+                    post.getStartDate(),
+                    post.getEndDate())
                 );
             }
             //사진
@@ -84,10 +96,13 @@ public class PostServiceImpl implements PostService{
         return ResponseEntity.ok().body(result);
     }
 
-    // 글 작성 (사진 포함 같이)
+    /**
+     * 글 작성 (사진 포함 같이)
+     * @return
+     */
     @Override
     @Transactional
-    public Post write(Post param, List<MultipartFile> multipartFile, User user){
+    public Post write(Post createPost, List<MultipartFile> multipartFile, User user) {
 
         //post 저장
         //s3 -> 사진 외부 api
@@ -95,27 +110,20 @@ public class PostServiceImpl implements PostService{
         // 원래는 사진 저장 -> 글 저장 (Post 저장) -> PostPhoto, Photo 저장 순으로 가야함.
         // 이유는 사진 저장은 외부 API(AWS)를 사용하는 거기에 속도가 느릴 수밖에 없음.
         // 지금은 1, 2번 순 바뀜.
-        Post post = postRepository.save(param); // 글 저장  == Post 저장
+        Theme theme = themeRepository.findById(createPost.getTheme().getId()).orElseThrow(() -> new IllegalStateException("없는 테마입니다."));
+        createPost.setTheme(theme);
+        Post post = postRepository.save(createPost); // 글 저장  == Post 저장
         List<PostPhoto> list = getPhotos(multipartFile, user, post);
         postPhotoRepository.saveAll(list);
 
         return post;
     }
 
-    private List<PostPhoto> getPhotos(List<MultipartFile> multipartFile, User user, Post post) {
-        List<PostPhoto> list = new ArrayList<>(); // 사진 저장 리스트
-        for (MultipartFile file : multipartFile) {
-            PhotoDto photoDto = fileUploadService.save(file); // 하나씩 리스트로 저장
-            Photo photo = photoRepository.save(photoDto.toEntity(user));
-            list.add(new PostPhoto(post,photo)); // PostPhoto, Photo 저장
-        }
-        return list;
-    }
-
     // 글 업데이트(기존 사진 삭제 -> 새 사진 업로드)
+
     @Override
     @Transactional
-    public Post update(Post updatePost, List<MultipartFile> multipartFile, User user,Long postId){
+    public Post update(Post updatePost, List<MultipartFile> multipartFile, User user, Integer postId) {
         // post 업데이트
 
         Post udPost = postRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다."));
@@ -146,11 +154,32 @@ public class PostServiceImpl implements PostService{
 
     @Override
     @Transactional
-    public void delete(Long postId) {
+    public void delete(Integer postId) {
         // Post entity photos 부분 -> cascade = CascadeType.REMOVE
         // 함으로써 Post 삭제시 photos 도 삭제됨.
         // 처리 안 할 경우에 null 이 돼서 fk 가 보는 곳이 없어짐. 아니면 null 처리가 따로 있다던지..
         postRepository.deleteById(postId);
 
     }
+
+    private List<PostPhoto> getPhotos(List<MultipartFile> multipartFile, User user, Post post) {
+        List<PostPhoto> list = new ArrayList<>(); // 사진 저장 리스트
+        for (MultipartFile file : multipartFile) {
+            PhotoDto photoDto = fileUploadService.save(file); // 하나씩 리스트로 저장
+            Photo photo = photoRepository.save(photoDto.toEntity(user));
+            list.add(new PostPhoto(post, photo)); // PostPhoto, Photo 저장
+        }
+        return list;
+    }
+
+    @Override
+    @Transactional
+    public Post getPost(Integer postId) {
+        List<PostPhoto> photos = postPhotoRepository.findListById(postId);
+        Post post = postRepository.findWithLikeById(postId)
+            .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다."));
+        post.setPhotos(photos);
+        return post;
+    }
+
 }

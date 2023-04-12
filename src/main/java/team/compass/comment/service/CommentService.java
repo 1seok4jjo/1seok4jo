@@ -1,3 +1,4 @@
+/*
 package team.compass.comment.service;
 
 
@@ -8,6 +9,8 @@ import org.springframework.stereotype.Service;
 import team.compass.comment.domain.Comment;
 
 import team.compass.comment.repository.CommentRepository;
+import team.compass.member.domain.User;
+import team.compass.post.entitiy.Post;
 
 @Service
 @RequiredArgsConstructor
@@ -27,3 +30,4 @@ public void registerComment(Comment comment){
     }
 
 }
+*/

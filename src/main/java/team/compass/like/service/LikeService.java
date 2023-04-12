@@ -5,10 +5,11 @@ import org.springframework.stereotype.Service;
 import team.compass.like.domain.Likes;
 import team.compass.like.dto.LikeDto;
 import team.compass.like.repository.LikeRepository;
-import team.compass.like.repository.PostRepository;
-import team.compass.like.repository.UserRepository;
 import team.compass.member.domain.User;
-import team.compass.post.entity.Post;
+import team.compass.member.repository.UserRepository;
+
+import team.compass.post.domain.Post;
+import team.compass.post.repository.PostRepository;
 
 @Service
 @RequiredArgsConstructor

@@ -1,39 +1,38 @@
 package team.compass.post.repository;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import team.compass.post.entity.Post;
-
-import java.util.List;
-import java.util.Optional;
-
-//TODO: 글쓰기
-//TODO: 글수정
-//TODO: 글삭제
-//TODO: 글조회
-//TODO: 해당 글 조회 (detail)
-
-//TODO: 글목록조회 - ?
-//TODO: 글좋아요 - ? 은수님?
-//TODO: 글좋아요취소 - ? 은수님..?
-//TODO: 글검색 - LIKE 문 쓸지 고민
-//TODO: 어떤 테마 누르면 해당 테마에 해당되는 글 목록
+import team.compass.post.domain.Post;
 
 @Repository
-public interface PostRepository extends JpaRepository<Post,Long> {
-
+public interface PostRepository extends JpaRepository<Post,Integer> {
+    //TODO: 글쓰기 o
+    //TODO: 글수정 o
+    //TODO: 글삭제 o
+    //TODO: 글조회 o
+    //TODO: 해당 글 조회 (detail) (눌렀을 때) o
+    //TODO: 해당 테마 글 조회 (해당 테마를 누르면 그에 해당되는 글 list 조회)
+    //TODO: 글검색 - DB LIKE 로 해결할지
 
     @Query("select p from Post p left join fetch p.photos where p.id = :id")
-    Optional<Post> findById(@Param(value = "id") Long id); // 단건 조회
+    Optional<Post> findById(@Param(value = "id") Integer id); // 단건 조회 (사진)
+
+    @Query("select p from Post p left join fetch  p.likes left join fetch p.user where p.id = :id")
+    Optional<Post> findWithLikeById(@Param(value = "id") Integer id); // 단건 조회 (좋아요 수 같이)
 
     @Query("select p from Post p left join fetch p.likes group by p.id")
-    List<Post> findList(); // 전체 조회
+    List<Post> findList(); // 전체 조회 -> main page
 
     @Query("select p from Post p left join fetch p.photos pp join fetch pp.photo where p.id in(:id)") // 사진까지 같이 긁어오기
-    List<Post> findListById(@Param(value = "id") List<Long> id); // photo
+    List<Post> findListById(@Param(value = "id") List<Integer> id); // photo -> main page
+
 }
+
 
 /*
     TODO : 해당 글 조회
@@ -62,4 +61,3 @@ public interface PostRepository extends JpaRepository<Post,Long> {
     left join photo p on pp.photo_id = p.photo_id
     where pp.post_id = {}
  */
-

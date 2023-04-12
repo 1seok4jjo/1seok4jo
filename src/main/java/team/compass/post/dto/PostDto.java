@@ -9,7 +9,7 @@ import lombok.Data;
 
 @Data
 public class PostDto {
-    private Long postId;
+    private Integer postId;
     private Integer likeCount;
     private List<String> photoName;
 
@@ -20,7 +20,7 @@ public class PostDto {
     private String startDate;
     private String endDate;
 
-    public PostDto(Long postId, Integer likeCount, List<String> photoName, String title, String location, String startDate, String endDate) {
+    public PostDto(Integer postId, Integer likeCount, List<String> photoName, String title, String location, String startDate, String endDate) {
         this.postId = postId;
         this.likeCount = likeCount;
         this.photoName = photoName;
@@ -31,3 +31,26 @@ public class PostDto {
     }
 
 }
+
+
+// @Data
+// static class PostDto {
+//     @Override
+//     public String toString() {
+//         return "PostDto{" +
+//             "postName=" + postName +
+//             ", likeCount=" + likeCount +
+//             ", photoName=" + photoName +
+//             '}';
+//     }
+//
+//     private Long postName;
+//     private Integer likeCount;
+//     private List<String> photoName;
+//
+//     public PostDto(Long postName, Integer likeCount, List<String> photoName) {
+//         this.postName = postName;
+//         this.likeCount = likeCount;
+//         this.photoName = photoName;
+//     }
+// }

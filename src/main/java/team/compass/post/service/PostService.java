@@ -2,10 +2,9 @@ package team.compass.post.service;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import team.compass.post.entity.Post;
-import team.compass.post.entity.User;
+import team.compass.member.domain.User;
+import team.compass.post.domain.Post;
 
 import java.util.List;
 
@@ -14,14 +13,12 @@ public interface PostService {
     // 메인 페이지 select
     ResponseEntity<Object> mainPageSelect();
 
-
-    @Transactional
     Post write(Post param, List<MultipartFile> multipartFile, User user);
 
+    Post update(Post param, List<MultipartFile> multipartFile, User user, Integer postId);
 
-    @Transactional
-    Post update(Post param, List<MultipartFile> multipartFile, User user, Long postId);
 
-    @Transactional
-    void delete(Long postId);
+    void delete(Integer postId);
+
+    Post getPost(Integer postId);
 }

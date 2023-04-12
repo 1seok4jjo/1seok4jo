@@ -5,7 +5,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import team.compass.member.domain.User;
-import team.compass.post.entity.Post;
+import team.compass.post.domain.Post;
+
 
 import javax.persistence.*;
 
