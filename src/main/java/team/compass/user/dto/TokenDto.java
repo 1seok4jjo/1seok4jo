@@ -1,4 +1,4 @@
-package team.compass.member.dto;
+package team.compass.user.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

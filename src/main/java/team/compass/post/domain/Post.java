@@ -26,7 +26,7 @@ import lombok.Setter;
 
 import team.compass.comment.domain.Comment;
 import team.compass.like.domain.Likes;
-import team.compass.member.domain.User;
+import team.compass.user.domain.User;
 import team.compass.theme.domain.Theme;
 
 @Entity
@@ -73,7 +73,7 @@ public class Post {
     @OneToMany(mappedBy = "post",fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<PostPhoto> photos; // 사진
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "theme_id")
     private Theme theme; // 테마
 

@@ -11,7 +11,7 @@ import lombok.Data;
 public class PostDto {
     private Integer postId;
     private Integer likeCount;
-    private List<String> photoName;
+    private List<String> storeFileUrl;
 
     private String title;
 
@@ -20,10 +20,10 @@ public class PostDto {
     private String startDate;
     private String endDate;
 
-    public PostDto(Integer postId, Integer likeCount, List<String> photoName, String title, String location, String startDate, String endDate) {
+    public PostDto(Integer postId, Integer likeCount, List<String> storeFileUrl, String title, String location, String startDate, String endDate) {
         this.postId = postId;
         this.likeCount = likeCount;
-        this.photoName = photoName;
+        this.storeFileUrl = storeFileUrl;
         this.title = title;
         this.location = location;
         this.startDate = startDate;

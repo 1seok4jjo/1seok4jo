@@ -1,4 +1,4 @@
-package team.compass.member.domain;
+package team.compass.user.domain;
 
 
 import lombok.AllArgsConstructor;
@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import team.compass.member.dto.MemberRequestDto;
+import team.compass.user.dto.UserRequestDto;
 
 import javax.persistence.*;
 import java.util.*;
@@ -45,6 +45,7 @@ public class User implements UserDetails {
     // 권한 추가?????
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> roles = new ArrayList<>();
+
 
 
 
@@ -85,7 +86,7 @@ public class User implements UserDetails {
         return true;
     }
 
-    public static User from(MemberRequestDto.SignUp parameter) {
+    public static User from(UserRequestDto.SignUp parameter) {
         return User.builder()
                 .email(parameter.getEmail().toLowerCase(Locale.ROOT))
                 .password(parameter.getPassword())

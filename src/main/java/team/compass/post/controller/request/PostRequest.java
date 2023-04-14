@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 @Builder
 public class PostRequest {
 
+
     private String title; // 제목
     private String detail; // 내용
     private String location;
@@ -23,7 +24,7 @@ public class PostRequest {
     private String hashtag; // 해시태그 (프론트에서 받아옴, #마다 잘라서 문자로 들어옴)
     private Integer themeId;
 
-    // DTO - ENTITY
+    // DTO - ENTITY (toEntity를 DTO 에서 해주는 것.) Entity 는 테이블 그 자체이기에 건들면 위험함
     public Post toEntity() {
         return Post.builder()
                 .title(title)

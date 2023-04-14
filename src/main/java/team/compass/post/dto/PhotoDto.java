@@ -3,7 +3,7 @@ package team.compass.post.dto;
 
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
-import team.compass.member.domain.User;
+import team.compass.user.domain.User;
 import team.compass.photo.domain.Photo;
 import team.compass.photo.util.MultipartUtil;
 

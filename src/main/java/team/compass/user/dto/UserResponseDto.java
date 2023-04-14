@@ -1,21 +1,21 @@
-package team.compass.member.dto;
+package team.compass.user.dto;
 
 import lombok.*;
-import team.compass.member.domain.User;
+import team.compass.user.domain.User;
 
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MemberResponseDto {
+public class UserResponseDto {
     private Integer userId;
     private String email;
     private String nickName;
     private String accessToken;
 
-    public static MemberResponseDto to(User user, String accessToken) {
-        return MemberResponseDto.builder()
+    public static UserResponseDto to(User user, String accessToken) {
+        return UserResponseDto.builder()
                 .userId(user.getUserId())
                 .email(user.getEmail())
                 .nickName(user.getNickName())
