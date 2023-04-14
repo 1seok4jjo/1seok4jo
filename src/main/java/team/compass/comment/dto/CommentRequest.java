@@ -15,9 +15,9 @@ import lombok.NoArgsConstructor;
 public class CommentRequest {
 
     @NotNull
-    private Long userId;
-    private Long postId;
+    private Integer userId;
+    private Integer postId;
     @NotBlank
-    private String commentOfDetail;
+    private String content;
 
 }
