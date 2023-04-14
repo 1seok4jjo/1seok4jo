@@ -7,9 +7,9 @@ import lombok.Data;
 @Data
 @Builder
 public class CommentResponse {
-    private Long commentId;
-    private Long UserId;
-    private String NickName;
+    private Integer commentId;
+    private Integer userId;
+    private String nickName;
     private String content;
     private String imageUrl;
     private LocalDateTime updatedAt;
