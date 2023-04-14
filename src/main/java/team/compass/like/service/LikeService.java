@@ -5,11 +5,10 @@ import org.springframework.stereotype.Service;
 import team.compass.like.domain.Likes;
 import team.compass.like.dto.LikeDto;
 import team.compass.like.repository.LikeRepository;
-import team.compass.user.domain.User;
-import team.compass.user.repository.UserRepository;
-
 import team.compass.post.domain.Post;
 import team.compass.post.repository.PostRepository;
+import team.compass.user.domain.User;
+import team.compass.user.repository.UserRepository;
 
 @Service
 @RequiredArgsConstructor
@@ -20,7 +19,7 @@ public class LikeService {
     private final UserRepository userRepository;
 
     // 좋아요 생성
-    public void addLike(LikeDto likeDto) throws Exception{
+    public void add(LikeDto likeDto) throws Exception {
 
         User user = userRepository.findById(likeDto.getUserId())
                 .orElseThrow(() -> new RuntimeException("로그인 후에 사용해주세요."));
@@ -32,6 +31,11 @@ public class LikeService {
             throw new Exception();
         }
 
+        if (postRepository.findByIdAndUserId(likeDto.getPostId(),
+                likeDto.getUserId()).isPresent()) {
+            throw new Exception("본인 글에는 좋아요가 불가합니다.");
+        }
+
         Likes likes = Likes.builder()
                 .post(post)
                 .user(user)
@@ -41,7 +45,7 @@ public class LikeService {
     }
 
     // 좋아요 취소
-    public void cancelLike(LikeDto likeDto) throws Exception {
+    public void cancel(LikeDto likeDto) throws Exception {
         User user = userRepository.findById(likeDto.getUserId())
                 .orElseThrow(() -> new RuntimeException("로그인 후에 사용해주세요."));
 
@@ -53,4 +57,5 @@ public class LikeService {
 
         likeRepository.delete(likes);
     }
+
 }
