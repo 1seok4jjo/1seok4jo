@@ -12,7 +12,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-import team.compass.member.dto.TokenDto;
+import team.compass.user.dto.TokenDto;
 
 import java.security.Key;
 import java.util.Arrays;

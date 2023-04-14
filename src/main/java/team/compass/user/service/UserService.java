@@ -1,4 +1,4 @@
-package team.compass.member.service;
+package team.compass.user.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -6,12 +6,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import team.compass.common.config.JwtTokenProvider;
-import team.compass.member.domain.User;
-import team.compass.member.dto.MemberRequestDto;
-import team.compass.member.dto.TokenDto;
-import team.compass.member.domain.RefreshToken;
-import team.compass.member.repository.RefreshTokenRepository;
-import team.compass.member.repository.UserRepository;
+import team.compass.user.domain.User;
+import team.compass.user.dto.TokenDto;
+import team.compass.user.domain.RefreshToken;
+import team.compass.user.dto.UserRequestDto;
+import team.compass.user.repository.RefreshTokenRepository;
+import team.compass.user.repository.UserRepository;
 
 @Service
 @RequiredArgsConstructor
@@ -22,7 +22,7 @@ public class UserService {
     private final RefreshTokenRepository refreshTokenRepository;
 
 //    @Transactional
-    public User signUp(MemberRequestDto.SignUp parameter) {
+    public User signUp(UserRequestDto.SignUp parameter) {
         boolean existsByEmail = memberRepository.existsByEmail(parameter.getEmail());
 
         if(existsByEmail) {
@@ -31,14 +31,14 @@ public class UserService {
 
         parameter.setPassword(passwordEncoder.encode(parameter.getPassword()));
 
-        User user = memberRepository.save(MemberRequestDto.SignUp.toEntity(parameter));
+        User user = memberRepository.save(UserRequestDto.SignUp.toEntity(parameter));
 
         return user;
     }
 
 //    @Transactional
 //    public User signIn(MemberRequestDto.SignIn parameter) {
-    public TokenDto signIn(MemberRequestDto.SignIn parameter) {
+    public TokenDto signIn(UserRequestDto.SignIn parameter) {
         User user = memberRepository.findByEmail(parameter.getEmail())
                 .orElseThrow(() -> new RuntimeException("해당 회원이 존재하지 않습니다."));
 

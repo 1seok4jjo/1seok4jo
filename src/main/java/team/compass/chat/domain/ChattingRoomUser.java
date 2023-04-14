@@ -1,6 +1,6 @@
 package team.compass.chat.domain;
 
-import team.compass.member.domain.User;
+import team.compass.user.domain.User;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

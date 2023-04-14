@@ -4,7 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import org.springframework.stereotype.Repository;
 import team.compass.like.domain.Likes;
-import team.compass.member.domain.User;
+import team.compass.user.domain.User;
 import team.compass.post.domain.Post;
 
 

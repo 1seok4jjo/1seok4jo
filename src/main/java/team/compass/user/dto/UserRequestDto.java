@@ -1,12 +1,12 @@
-package team.compass.member.dto;
+package team.compass.user.dto;
 
 import lombok.Builder;
 import lombok.Data;
-import team.compass.member.domain.User;
+import team.compass.user.domain.User;
 
 import javax.validation.constraints.NotEmpty;
 
-public class MemberRequestDto {
+public class UserRequestDto {
     @Data
     @Builder
     public static class SignIn {

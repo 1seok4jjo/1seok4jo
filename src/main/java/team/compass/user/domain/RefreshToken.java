@@ -1,4 +1,4 @@
-package team.compass.member.domain;
+package team.compass.user.domain;
 
 import lombok.Builder;
 import lombok.Getter;

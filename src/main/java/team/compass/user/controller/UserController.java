@@ -1,4 +1,4 @@
-package team.compass.member.controller;
+package team.compass.user.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -7,10 +7,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import team.compass.member.dto.MemberRequestDto;
-import team.compass.member.dto.TokenDto;
-import team.compass.member.domain.User;
-import team.compass.member.service.UserService;
+import team.compass.user.dto.TokenDto;
+import team.compass.user.domain.User;
+import team.compass.user.dto.UserRequestDto;
+import team.compass.user.service.UserService;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/member")
@@ -20,7 +20,7 @@ public class UserController {
 
     @PostMapping("/signup")
     public ResponseEntity<?> signup(
-            @RequestBody MemberRequestDto.SignUp parameter
+            @RequestBody UserRequestDto.SignUp parameter
     ) {
         User user = userService.signUp(parameter);
 
@@ -33,7 +33,7 @@ public class UserController {
 
     @PostMapping("/signin")
     public ResponseEntity<?> signin(
-            @RequestBody MemberRequestDto.SignIn parameter
+            @RequestBody UserRequestDto.SignIn parameter
     ) {
         TokenDto tokenDto = userService.signIn(parameter);
 
