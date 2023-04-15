@@ -13,7 +13,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import team.compass.user.dto.TokenDto;
+import team.compass.user.repository.RefreshTokenRepository;
 
+import javax.servlet.http.HttpServletRequest;
 import java.security.Key;
 import java.util.Arrays;
 import java.util.Collection;
@@ -26,8 +28,12 @@ public class JwtTokenProvider {
 
     private final long ACCESS_TOKEN_EXPIRE_TIME;
     private final long REFRESH_TOKEN_EXPIRE_TIME;
+    public static final String AUTHORIZATION_HEADER = "Authorization";
+
     private static final String BEARER_TYPE = "bearer";
     private static final String KEY_ROLES = "auth";
+
+    private RefreshTokenRepository refreshTokenRepository;
 
     private final Key key;
 
@@ -35,12 +41,14 @@ public class JwtTokenProvider {
     public JwtTokenProvider(
             @Value("${jwt.secret}") String secretKey,
             @Value("${jwt.access-token-expire-time}") long accessTime,
-            @Value("${jwt.refresh-token-expire-time}") long refreshTime
+            @Value("${jwt.refresh-token-expire-time}") long refreshTime,
+            RefreshTokenRepository refreshTokenRepository
     ) {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         this.key = Keys.hmacShaKeyFor(keyBytes);
         this.ACCESS_TOKEN_EXPIRE_TIME = accessTime;
         this.REFRESH_TOKEN_EXPIRE_TIME = refreshTime;
+        this.refreshTokenRepository = refreshTokenRepository;
     }
 
     // 토큰 생성
@@ -119,11 +127,22 @@ public class JwtTokenProvider {
         );
     }
 
+    public Long getExpiration(String accessToken) {
+        Date expiration = parseClaims(accessToken).getExpiration();
+        long now = new Date().getTime();
+
+        return (expiration.getTime() - now);
+    }
+
     public int validateToken(String token) {
         if(!StringUtils.hasText(token)) return -1;
 
         try {
             Claims claims = parseClaims(token);
+            if(refreshTokenRepository.hasKeyBlackList(token)) {
+                // redis에 등록된 블랙리스트 access key가 존재하는지 확인
+                return -1;
+            }
             return 1;
         } catch (ExpiredJwtException e){
 //            throw new RuntimeException("만료된 토큰입니다.");
@@ -132,6 +151,16 @@ public class JwtTokenProvider {
 //            throw new RuntimeException("토큰이 잘못되었습니다.");
             return -1;
         }
+    }
+
+    public String resolveToken(HttpServletRequest request) {
+        String token = request.getHeader(AUTHORIZATION_HEADER);
+
+        if(StringUtils.hasText(token) && token.startsWith(BEARER_TYPE)) {
+            return token.substring(7);
+        }
+
+        return null;
     }
 
     private Claims parseClaims(String token) {

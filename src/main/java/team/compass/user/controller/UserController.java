@@ -12,6 +12,8 @@ import team.compass.user.domain.User;
 import team.compass.user.dto.UserRequestDto;
 import team.compass.user.service.UserService;
 
+import javax.servlet.http.HttpServletRequest;
+
 @RequiredArgsConstructor
 @RequestMapping("/api/member")
 @RestController
@@ -31,12 +33,21 @@ public class UserController {
         return ResponseEntity.ok().body("회원가입 완료");
     }
 
-    @PostMapping("/signin")
+    @PostMapping("/sign-in")
     public ResponseEntity<?> signin(
             @RequestBody UserRequestDto.SignIn parameter
     ) {
         TokenDto tokenDto = userService.signIn(parameter);
 
         return ResponseEntity.ok().body(tokenDto);
+    }
+
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(
+            HttpServletRequest request
+    ) {
+        userService.logout(request);
+        return ResponseEntity.ok().body("로그아웃 완료");
     }
 }

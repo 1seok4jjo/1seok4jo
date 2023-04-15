@@ -2,19 +2,23 @@ package team.compass.user.dto;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import team.compass.user.domain.User;
 
 import javax.validation.constraints.NotEmpty;
 
 public class UserRequestDto {
-    @Data
+    @Getter
+    @Setter
     @Builder
     public static class SignIn {
         private String email;
         private String password;
     }
 
-    @Data
+    @Getter
+    @Setter
     @Builder
     public static class SignUp {
         @NotEmpty(message = "이메일 입력은 필수입니다.")
@@ -31,5 +35,12 @@ public class UserRequestDto {
                     .nickName(parameter.getNickname())
                     .build();
         }
+    }
+
+    @Getter
+    @Setter
+    public static class Logout {
+        private String email;
+        private String accessToken;
     }
 }

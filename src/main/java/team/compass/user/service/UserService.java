@@ -1,6 +1,7 @@
 package team.compass.user.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,9 @@ import team.compass.user.dto.UserRequestDto;
 import team.compass.user.repository.RefreshTokenRepository;
 import team.compass.user.repository.UserRepository;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.concurrent.TimeUnit;
+
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -21,7 +25,8 @@ public class UserService {
     private final JwtTokenProvider jwtTokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
 
-//    @Transactional
+    private final RedisTemplate redisTemplate;
+
     public User signUp(UserRequestDto.SignUp parameter) {
         boolean existsByEmail = memberRepository.existsByEmail(parameter.getEmail());
 
@@ -36,8 +41,6 @@ public class UserService {
         return user;
     }
 
-//    @Transactional
-//    public User signIn(MemberRequestDto.SignIn parameter) {
     public TokenDto signIn(UserRequestDto.SignIn parameter) {
         User user = memberRepository.findByEmail(parameter.getEmail())
                 .orElseThrow(() -> new RuntimeException("해당 회원이 존재하지 않습니다."));
@@ -59,6 +62,23 @@ public class UserService {
 
         return jwtTokenProvider.createTokenDto(accessToken, refreshToken);
     }
+
+    public void logout(
+            HttpServletRequest request
+    ) {
+        String accessToken = jwtTokenProvider.resolveToken(request);
+
+        Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
+
+        RefreshToken token = refreshTokenRepository.findByEmail(authentication.getName())
+                .orElseThrow(() -> new RuntimeException("해당 유저 토큰 정보가 없습니다."));
+
+        refreshTokenRepository.delete(token);
+        Long expiration = jwtTokenProvider.getExpiration(accessToken);
+
+        refreshTokenRepository.setBlackList(accessToken, expiration);
+    }
+
 
 
     @Transactional
@@ -96,7 +116,14 @@ public class UserService {
 
         TokenDto tokenDto = jwtTokenProvider.createTokenDto(newAccessToken, newRefreshToken);
 
-        refreshToken.updateValue(newRefreshToken);
+        refreshTokenRepository.save(
+                RefreshToken.builder()
+                        .email(user.getEmail())
+                        .refreshToken(newRefreshToken)
+                        .build()
+        );
+
+//        refreshToken.updateValue(newRefreshToken);
 
         return tokenDto;
     }
