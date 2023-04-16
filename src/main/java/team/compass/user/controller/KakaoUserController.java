@@ -17,7 +17,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class KakaoUserController {
     private final KakaoUserService kakaoUserService;
-    @GetMapping("/user/oauth")
+    @GetMapping("/api/member/oauth")
     public ResponseEntity<?> kakaoLogin(
             @RequestParam String code,
             HttpServletResponse response
