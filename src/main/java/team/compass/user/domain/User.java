@@ -37,7 +37,10 @@ public class User implements UserDetails {
     private String emailAuthKey;
     private String resetPasswordKey;
 
-    private String kakaoId;
+    private String userBannerImgUrl;
+    private String userProfileImgUrl;
+
+    private String loginType;
 
     // 권한 추가?????
     @ElementCollection(fetch = FetchType.EAGER)

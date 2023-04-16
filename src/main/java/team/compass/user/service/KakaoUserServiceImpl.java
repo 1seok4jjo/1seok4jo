@@ -16,13 +16,12 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import team.compass.common.config.JwtTokenProvider;
 import team.compass.user.domain.User;
-import team.compass.user.dto.KakaoUserDto;
 import team.compass.user.dto.TokenDto;
 import team.compass.user.dto.UserRequest;
+import team.compass.user.dto.UserSignUpType;
 import team.compass.user.repository.UserRepository;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.UUID;
 
 @Service
@@ -71,6 +70,7 @@ public class KakaoUserServiceImpl implements KakaoUserService {
                     .email(kakaoUserEmail)
                     .password(encodedPassword)
                     .nickname(kakaoNickname)
+                    .loginType(UserSignUpType.KAKAO.getSignUpType())
                     .build();
 
             kakaoUser = userRepository.save(UserRequest.SignUp.toEntity(parameter));

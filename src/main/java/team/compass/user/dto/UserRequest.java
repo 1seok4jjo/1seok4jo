@@ -27,11 +27,14 @@ public class UserRequest {
         @NotEmpty(message = "닉네임 입력은 필수입니다.")
         private String nickname;
 
+        private String loginType;
+
         public static User toEntity(SignUp parameter) {
             return User.builder()
                     .email(parameter.getEmail())
                     .password(parameter.getPassword())
                     .nickName(parameter.getNickname())
+                    .loginType(parameter.getLoginType())
                     .build();
         }
     }
