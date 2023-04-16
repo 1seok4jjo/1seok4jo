@@ -46,9 +46,10 @@ public class UserController {
 
     @PostMapping("/update")
     public ResponseEntity<?> update(
-            @RequestBody UserUpdate parameter
+            @RequestBody UserUpdate parameter,
+            HttpServletRequest request
     ) {
-        User user = userService.updateUserInfo(parameter);
+        User user = userService.updateUserInfo(parameter, request);
 
         UserResponse userResponse = UserResponse.to(user);
 

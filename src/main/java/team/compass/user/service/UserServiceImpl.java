@@ -5,6 +5,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import team.compass.common.config.JwtTokenProvider;
 import team.compass.user.domain.RefreshToken;
 import team.compass.user.domain.User;
@@ -63,8 +64,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User updateUserInfo(UserUpdate parameter) {
-        Authentication authentication = jwtTokenProvider.getAuthentication(parameter.getAccessToken());
+    public User updateUserInfo(UserUpdate parameter, HttpServletRequest request) {
+        String accessToken = jwtTokenProvider.resolveToken(request);
+
+        if(!StringUtils.hasText(accessToken)) {
+            throw new RuntimeException("토큰 정보가 없습니다.");
+        }
+
+        Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
 
         User user = memberRepository.findByEmail(authentication.getName())
                 .orElseThrow(() -> new RuntimeException("로그인 유저 정보가 없습니다."));
@@ -143,8 +150,6 @@ public class UserServiceImpl implements UserService {
                         .refreshToken(newRefreshToken)
                         .build()
         );
-
-//        refreshToken.updateValue(newRefreshToken);
 
         return tokenDto;
     }

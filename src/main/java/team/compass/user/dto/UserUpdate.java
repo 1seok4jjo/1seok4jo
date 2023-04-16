@@ -9,5 +9,4 @@ import lombok.Setter;
 public class UserUpdate {
     private String password;
     private String nickName;
-    private String accessToken;
 }

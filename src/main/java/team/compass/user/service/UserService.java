@@ -14,7 +14,7 @@ public interface UserService {
     User signUp(UserRequest.SignUp parameter);
     TokenDto signIn(UserRequest.SignIn parameter);
 
-    User updateUserInfo(UserUpdate parameter);
+    User updateUserInfo(UserUpdate parameter, HttpServletRequest request);
 
 
     void logout(HttpServletRequest request);

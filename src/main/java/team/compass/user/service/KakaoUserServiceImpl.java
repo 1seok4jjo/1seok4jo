@@ -57,7 +57,7 @@ public class KakaoUserServiceImpl implements KakaoUserService {
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode accountValue = objectMapper.readTree(kakaoUserAccountJson);
 
-        String kakaoUserEmail = String.valueOf(accountValue.get("email"));
+        String kakaoUserEmail = String.valueOf(accountValue.get("email").asText());
         User kakaoUser = userRepository.findByEmail(kakaoId).orElse(null);
 
         if(kakaoUser == null) {
