@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 import team.compass.user.domain.User;
 import team.compass.user.dto.TokenDto;
 import team.compass.user.dto.UserRequest;
+import team.compass.user.dto.UserResponse;
+import team.compass.user.dto.UserUpdate;
 import team.compass.user.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,7 +23,6 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/signup")
-//    public ApiResponse<?> signup(
     public ResponseEntity<?> signup(
             @RequestBody UserRequest.SignUp parameter
     ) {
@@ -29,10 +30,8 @@ public class UserController {
 
         if(ObjectUtils.isEmpty(user)) {
             return ResponseEntity.badRequest().body("회원가입 실패");
-//            return ApiResponse.createFail();
         }
 
-//        return ApiResponse.createSuccess(null);
         return ResponseEntity.ok().body("회원가입 완료");
     }
 
@@ -45,8 +44,16 @@ public class UserController {
         return ResponseEntity.ok().body(tokenDto);
     }
 
-//    @GetMapping("/sign-in/kakao")
-//    public ResponseEntity<?> kakaoSignIn()
+    @PostMapping("/update")
+    public ResponseEntity<?> update(
+            @RequestBody UserUpdate parameter
+    ) {
+        User user = userService.updateUserInfo(parameter);
+
+        UserResponse userResponse = UserResponse.to(user);
+
+        return ResponseEntity.ok().body(userResponse);
+    }
 
 
     @PostMapping("/logout")

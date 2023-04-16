@@ -12,14 +12,12 @@ public class UserResponse {
     private Integer userId;
     private String email;
     private String nickName;
-    private String accessToken;
 
-    public static UserResponse to(User user, String accessToken) {
+    public static UserResponse to(User user) {
         return UserResponse.builder()
                 .userId(user.getUserId())
                 .email(user.getEmail())
                 .nickName(user.getNickName())
-                .accessToken(accessToken)
                 .build();
     }
 }

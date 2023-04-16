@@ -4,6 +4,8 @@ import org.springframework.stereotype.Service;
 import team.compass.user.domain.User;
 import team.compass.user.dto.TokenDto;
 import team.compass.user.dto.UserRequest;
+import team.compass.user.dto.UserResponse;
+import team.compass.user.dto.UserUpdate;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -11,6 +13,8 @@ import javax.servlet.http.HttpServletRequest;
 public interface UserService {
     User signUp(UserRequest.SignUp parameter);
     TokenDto signIn(UserRequest.SignIn parameter);
+
+    User updateUserInfo(UserUpdate parameter);
 
 
     void logout(HttpServletRequest request);

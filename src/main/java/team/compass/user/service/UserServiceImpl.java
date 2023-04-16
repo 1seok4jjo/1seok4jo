@@ -10,6 +10,7 @@ import team.compass.user.domain.RefreshToken;
 import team.compass.user.domain.User;
 import team.compass.user.dto.TokenDto;
 import team.compass.user.dto.UserRequest;
+import team.compass.user.dto.UserUpdate;
 import team.compass.user.repository.RefreshTokenRepository;
 import team.compass.user.repository.UserRepository;
 
@@ -61,6 +62,26 @@ public class UserServiceImpl implements UserService {
         return jwtTokenProvider.createTokenDto(accessToken, refreshToken);
     }
 
+    @Override
+    public User updateUserInfo(UserUpdate parameter) {
+        Authentication authentication = jwtTokenProvider.getAuthentication(parameter.getAccessToken());
+
+        User user = memberRepository.findByEmail(authentication.getName())
+                .orElseThrow(() -> new RuntimeException("로그인 유저 정보가 없습니다."));
+
+        String encodedPassword = passwordEncoder.encode(parameter.getPassword());
+
+        User updateUser = User.builder()
+                            .userId(user.getUserId())
+                            .email(user.getEmail())
+                            .password(encodedPassword)
+                            .nickName(parameter.getNickName())
+                            .build();
+
+        memberRepository.save(updateUser);
+
+        return updateUser;
+    }
 
     @Override
     public void logout(
