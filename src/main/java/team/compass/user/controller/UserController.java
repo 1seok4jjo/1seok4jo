@@ -3,10 +3,7 @@ package team.compass.user.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.ObjectUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import team.compass.user.domain.User;
 import team.compass.user.dto.TokenDto;
 import team.compass.user.dto.UserRequest;
@@ -44,7 +41,7 @@ public class UserController {
         return ResponseEntity.ok().body(tokenDto);
     }
 
-    @PostMapping("/update")
+    @PutMapping("/update")
     public ResponseEntity<?> update(
             @RequestBody UserUpdate parameter,
             HttpServletRequest request
