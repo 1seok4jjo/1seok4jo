@@ -17,7 +17,8 @@ public interface PostService {
     Post update(Post param, List<MultipartFile> multipartFile, User user, Integer postId);
 
 
-    void delete(Integer postId);
+//    void delete(Integer postId);
+    boolean delete(Integer postId);
 
     Post getPost(Integer postId);
 

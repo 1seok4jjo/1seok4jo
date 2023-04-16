@@ -18,7 +18,7 @@ public class SwaggerConfig {
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
             .select()
-            .apis(RequestHandlerSelectors.basePackage("com.example.demo")) // 경로 설정해주기
+            .apis(RequestHandlerSelectors.basePackage("team.compass")) // 경로 설정해주기
             .paths(PathSelectors.any()) // path 기준으로 swagger 에 api 표시
             .build()
             .apiInfo(apiInfo());
