@@ -8,14 +8,14 @@ import team.compass.user.domain.User;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserResponseDto {
+public class UserResponse {
     private Integer userId;
     private String email;
     private String nickName;
     private String accessToken;
 
-    public static UserResponseDto to(User user, String accessToken) {
-        return UserResponseDto.builder()
+    public static UserResponse to(User user, String accessToken) {
+        return UserResponse.builder()
                 .userId(user.getUserId())
                 .email(user.getEmail())
                 .nickName(user.getNickName())

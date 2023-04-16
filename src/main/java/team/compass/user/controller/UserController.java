@@ -7,9 +7,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import team.compass.user.dto.TokenDto;
 import team.compass.user.domain.User;
-import team.compass.user.dto.UserRequestDto;
+import team.compass.user.dto.TokenDto;
+import team.compass.user.dto.UserRequest;
 import team.compass.user.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,26 +21,32 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/signup")
+//    public ApiResponse<?> signup(
     public ResponseEntity<?> signup(
-            @RequestBody UserRequestDto.SignUp parameter
+            @RequestBody UserRequest.SignUp parameter
     ) {
         User user = userService.signUp(parameter);
 
         if(ObjectUtils.isEmpty(user)) {
             return ResponseEntity.badRequest().body("회원가입 실패");
+//            return ApiResponse.createFail();
         }
 
+//        return ApiResponse.createSuccess(null);
         return ResponseEntity.ok().body("회원가입 완료");
     }
 
     @PostMapping("/sign-in")
-    public ResponseEntity<?> signin(
-            @RequestBody UserRequestDto.SignIn parameter
+    public ResponseEntity<?> signIn(
+            @RequestBody UserRequest.SignIn parameter
     ) {
         TokenDto tokenDto = userService.signIn(parameter);
 
         return ResponseEntity.ok().body(tokenDto);
     }
+
+//    @GetMapping("/sign-in/kakao")
+//    public ResponseEntity<?> kakaoSignIn()
 
 
     @PostMapping("/logout")

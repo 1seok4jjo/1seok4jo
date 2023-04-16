@@ -4,12 +4,11 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Id;
 
 @Getter
 @NoArgsConstructor
-//@Entity
-//@Table(name = "refresh_token")
 public class RefreshToken {
     @Id
     private String email;

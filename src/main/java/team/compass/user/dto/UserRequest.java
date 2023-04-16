@@ -1,14 +1,13 @@
 package team.compass.user.dto;
 
 import lombok.Builder;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import team.compass.user.domain.User;
 
 import javax.validation.constraints.NotEmpty;
 
-public class UserRequestDto {
+public class UserRequest {
     @Getter
     @Setter
     @Builder
