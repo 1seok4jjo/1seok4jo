@@ -7,6 +7,9 @@ import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import team.compass.comment.domain.Comment;
+import team.compass.post.domain.Post;
+import team.compass.user.domain.User;
 
 
 @Data
@@ -19,5 +22,13 @@ public class CommentRequest {
     private Integer postId;
     @NotBlank
     private String content;
+
+    public Comment requestComment(Post posting, User writer){
+        return Comment.builder()
+            .post(posting)
+            .writer(writer)
+            .content(this.content)
+            .build();
+    }
 
 }

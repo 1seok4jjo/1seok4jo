@@ -19,7 +19,7 @@ public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
-    private Long commentId;
+    private Integer commentId;
     @ManyToOne //comment(M) User(O)
     @JoinColumn
     private User writer;
@@ -30,6 +30,11 @@ public class Comment {
     private String content;
     @Column
     private LocalDateTime createdTime;
+    private LocalDateTime updateTime;
 
 
+    public void updateContent(String content) {
+        this.content = content;
+    }
 }
+

@@ -39,6 +39,8 @@ public class User implements UserDetails {
     @Column(name = "resetPasswordKey")
     private String resetPasswordKey;
 
+    private String profileImageUrl;
+
     @Column(name = "kakaoId")
     private String kakaoId;
 

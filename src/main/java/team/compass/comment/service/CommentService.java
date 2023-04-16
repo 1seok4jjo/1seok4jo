@@ -32,7 +32,7 @@ public class CommentService {
             .orElseThrow(() -> new RuntimeException("해당 회원을 찾을 수 없습니다"));
 
         Comment newComment = commentRepository.save(request.requestComment(post, writer));
-        return CommentResponse.responseComment(newComment);
+        return CommentResponse.responseComment(newComment,writer);
     }
     //댓글조회
 
@@ -47,7 +47,7 @@ public class CommentService {
         comment.updateContent(request.getContent());
         commentRepository.save(comment);
 
-        return CommentResponse.responseComment(comment);
+        return CommentResponse.fromEntity(comment);
     }
 
 //댓글 삭제
