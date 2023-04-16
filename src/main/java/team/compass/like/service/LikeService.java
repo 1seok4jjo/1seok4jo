@@ -18,44 +18,30 @@ public class LikeService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
 
-    // 좋아요 생성
-    public void add(LikeDto likeDto) throws Exception {
+    public boolean saveLike(LikeDto likeDto) {
 
-        User user = userRepository.findById(likeDto.getUserId())
-                .orElseThrow(() -> new RuntimeException("로그인 후에 사용해주세요."));
+        boolean state = true;
 
-        Post post = postRepository.findById(likeDto.getPostId())
-                .orElseThrow(() -> new RuntimeException("게시글이 없습니다."));
+        User user = userRepository.findById(likeDto.getUserId()).orElse(null);
+        
+        Post post =
+                postRepository.findById(likeDto.getPostId()).orElse(null);
 
-        if (likeRepository.findByPostAndUser(post, user).isPresent()) {
-            throw new Exception();
+        Likes checkLike =
+                likeRepository.findAllByPost_IdAndUser_Id(likeDto.getPostId()
+                        , likeDto.getUserId()).orElse(null);
+
+        if (checkLike != null) {
+            likeRepository.delete(checkLike);
+            state = false;
+
+        } else {
+            likeRepository.save(Likes.builder()
+                    .post(post)
+                    .user(user)
+                    .build());
         }
 
-        if (postRepository.findByIdAndUserId(likeDto.getPostId(),
-                likeDto.getUserId()).isPresent()) {
-            throw new Exception("본인 글에는 좋아요가 불가합니다.");
-        }
-
-        Likes likes = Likes.builder()
-                .post(post)
-                .user(user)
-                .build();
-
-        likeRepository.save(likes);
+        return state;
     }
-
-    // 좋아요 취소
-    public void cancel(LikeDto likeDto) throws Exception {
-        User user = userRepository.findById(likeDto.getUserId())
-                .orElseThrow(() -> new RuntimeException("로그인 후에 사용해주세요."));
-
-        Post post = postRepository.findById(likeDto.getPostId())
-                .orElseThrow(() -> new RuntimeException("게시글이 없습니다."));
-
-        Likes likes = likeRepository.findByPostAndUser(post, user)
-                .orElseThrow(() -> new RuntimeException("이미 좋아요 한 상태입니다."));
-
-        likeRepository.delete(likes);
-    }
-
 }

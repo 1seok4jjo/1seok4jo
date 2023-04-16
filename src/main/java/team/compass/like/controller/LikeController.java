@@ -7,18 +7,12 @@ import team.compass.like.service.LikeService;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/post/like")
 public class LikeController {
 
     private final LikeService likeService;
 
-    @PostMapping
-    public void addLike(@RequestBody LikeDto likeDto) throws Exception{
-        likeService.add(likeDto);
-    }
-
-    @DeleteMapping("/delete")
-    public void cancelLike(@RequestBody LikeDto likeDto) throws Exception {
-        likeService.cancel(likeDto);
+    @PostMapping("/post/like")
+    public void addLike(@RequestBody LikeDto likeDto, @PathVariable Integer id){
+        likeService.saveLike(likeDto);
     }
 }
