@@ -1,3 +1,5 @@
+
+
 package team.compass.user.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -35,3 +37,4 @@ public class KakaoUserController {
         return ResponseUtils.ok("카카오 소셜 로그인 되었습니다.", tokenDto);
     }
 }
+
