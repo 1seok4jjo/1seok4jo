@@ -5,10 +5,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import team.compass.comment.repository.CommentRepository;
 import team.compass.photo.domain.Photo;
 import team.compass.photo.repository.PhotoRepository;
 import team.compass.photo.repository.PostPhotoRepository;
 import team.compass.photo.service.FileUploadService;
+import team.compass.post.controller.response.PostResponse;
 import team.compass.post.domain.Post;
 import team.compass.post.domain.PostPhoto;
 import team.compass.post.dto.PhotoDto;
@@ -41,6 +43,8 @@ public class PostServiceImpl implements PostService {
     private final ThemeRepository themeRepository;
 
     private final PostCustomRepository postCustomRepository;
+
+    private final CommentRepository commentRepository;
 
 
     /**
@@ -128,14 +132,14 @@ public class PostServiceImpl implements PostService {
      * 해당 글 가져오기
      */
     @Override
-    @Transactional
-    public Post getPost(Integer postId) {
-        List<PostPhoto> photos = postPhotoRepository.findListById(postId);
-        Post post = postRepository.findWithLikeById(postId)
+    @Transactional(readOnly = true)
+    public PostResponse getPost(Integer postId) {
+        Post post = postCustomRepository.findWithLikeById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다."));
-        post.setPhotos(photos); // 사진 추가하고 리턴
-        return post;
+        Long commentCount = commentRepository.countByPostId(postId);
+        return new PostResponse(post, commentCount);
     }
+
 
     /**
      * <해당 테마 글 리스트 조회>

@@ -3,17 +3,7 @@ package team.compass.post.domain;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -35,6 +25,14 @@ import team.compass.theme.domain.Theme;
 @AllArgsConstructor
 @Builder
 @Setter
+@NamedEntityGraph(name = "Post.withAll",attributeNodes = {
+        @NamedAttributeNode("theme"),
+        @NamedAttributeNode("contents"),
+        @NamedAttributeNode("likes"),
+        @NamedAttributeNode("user"), // 관계 알림
+        @NamedAttributeNode(value = "photos",subgraph = "photos")} // photos 서브그래프 지정(value = Post 안의 photos, 네이밍)
+        ,subgraphs = @NamedSubgraph(name ="photos",attributeNodes = {@NamedAttributeNode("photo")})
+) // PostPhoto -> Photo 는 객체 그래프가 아니므로 서브 그래프로 지정해야만 한다. (참조되게!) NamedAttributeNode 속성을 이용해 photo 라는 이름의 서브 그래프.
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
