@@ -23,18 +23,18 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
 
         TypedQuery<Post> query=null;
 
-        if (lastId == null) { // ¸¸¾à lastId °¡ null ÀÏ °æ¿ì
-            query = entityManager.createQuery(first, Post.class) // Ã¹¹øÂ° Äõ¸®
-                    .setParameter("theme", theme); // ÇØ´ç Å×¸¶ ¾ÆÀÌµð ³Ö±â
+        if (lastId == null) { // ï¿½ï¿½ï¿½ï¿½ lastId ï¿½ï¿½ null ï¿½ï¿½ ï¿½ï¿½ï¿½
+            query = entityManager.createQuery(first, Post.class) // Ã¹ï¿½ï¿½Â° ï¿½ï¿½ï¿½ï¿½
+                    .setParameter("theme", theme); // ï¿½Ø´ï¿½ ï¿½×¸ï¿½ ï¿½ï¿½ï¿½Ìµï¿½ ï¿½Ö±ï¿½
         } else {
             query = entityManager
-                    .createQuery(paging, Post.class) // lastId °¡ ÀÖÀ» °æ¿ìÀÎµ¥
-                    .setParameter("theme", theme) // ÇØ´ç Å×¸¶ ¾ÆÀÌµð ³Ö±â
-                    .setParameter("lastId", lastId); // lastId ±âÁØÀ¸·Î ÀÌ°Íº¸´Ù ÀÛÀº °Íµé list, orderBy desc
+                    .createQuery(paging, Post.class) // lastId ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Îµï¿½
+                    .setParameter("theme", theme) // ï¿½Ø´ï¿½ ï¿½×¸ï¿½ ï¿½ï¿½ï¿½Ìµï¿½ ï¿½Ö±ï¿½
+                    .setParameter("lastId", lastId); // lastId ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì°Íºï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Íµï¿½ list, orderBy desc
         }
 
         return query
-                .setMaxResults(10) // 5°³¸¦ »Ì¾Æ¿É´Ï´Ù.
+                .setMaxResults(10) // 5ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¾Æ¿É´Ï´ï¿½.
                 .getResultList(); // list
     }
 }

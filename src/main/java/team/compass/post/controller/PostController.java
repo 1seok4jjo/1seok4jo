@@ -57,7 +57,7 @@ public class PostController {
     public ResponseEntity<Object> postWrite(
             @RequestPart(value = "data") PostRequest postRequest, // request post 로 받아오기. 내용들
             @RequestPart(value = "images") List<MultipartFile> images,
-            Theme theme) { // 이미지 받아오기
+    Theme theme) { // 이미지 받아오기
 
         validationPhoto(images); // 유효성 검증(이미지 최대 5개까지 받아올 수 있게)
         User user = userRepository.findById(1)

@@ -1,4 +1,3 @@
-
 package team.compass.comment.service;
 
 
@@ -56,6 +55,4 @@ public class CommentService {
         commentRepository.findById(commentId).ifPresent(commentRepository::delete);
     }
 }
-
-
 
