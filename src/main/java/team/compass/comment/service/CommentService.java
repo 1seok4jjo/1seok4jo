@@ -24,19 +24,18 @@ public class CommentService {
 
     //댓글 생성
     @Transactional
-    public CommentResponse registerComment(CommentRequest request ,Integer postId, Integer userId) {
-        Post post = postRepository.findById(postId)
+    public CommentResponse registerComment(CommentRequest request) {
+        Post post = postRepository.findById(request.getPostId())
             .orElseThrow(() -> new RuntimeException("해당 게시글을 찾을 수 없습니다"));
 
-        User writer = userRepository.findById(userId)
+        User writer = userRepository.findById(request.getUserId())
             .orElseThrow(() -> new RuntimeException("해당 회원을 찾을 수 없습니다"));
 
         Comment newComment = commentRepository.save(request.requestComment(post, writer));
         return CommentResponse.responseComment(newComment, writer);
     }
-}
     //댓글조회
-/*
+
 //댓글수정
     public CommentResponse updateComment(Integer commentId, CommentRequest request) {
         Comment comment = commentRepository.findById(commentId)
@@ -58,5 +57,5 @@ public class CommentService {
     }
 }
 
- */
+
 
