@@ -34,9 +34,9 @@ public class CommentResponse {
 
         CommentResponseBuilder builder = CommentResponse.builder()
             .commentId(comment.getCommentId())
-            .userId(comment.getWriter().getUserId())
-            .nickName(comment.getWriter().getNickName())
-            .imageUrl(comment.getWriter().getProfileImageUrl())
+            .userId(comment.getUser().getUserId())
+            .nickName(comment.getUser().getNickName())
+            .imageUrl(comment.getUser().getProfileImageUrl())
             .content(comment.getContent())
             .createdAt(comment.getCreatedTime())
             .updatedAt(comment.getUpdateTime());

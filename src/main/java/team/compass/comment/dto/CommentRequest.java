@@ -8,7 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import team.compass.comment.domain.Comment;
-import team.compass.post.domain.Post;
+import team.compass.photo.util.post.domain.Post;
 import team.compass.user.domain.User;
 
 
@@ -23,10 +23,10 @@ public class CommentRequest {
     @NotBlank
     private String content;
 
-    public Comment requestComment(Post posting, User writer){
+    public Comment requestComment(Post posting, User user){
         return Comment.builder()
             .post(posting)
-            .writer(writer)
+            .user(user)
             .content(this.content)
             .build();
     }
