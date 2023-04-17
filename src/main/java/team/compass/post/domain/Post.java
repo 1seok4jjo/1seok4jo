@@ -78,4 +78,7 @@ public class Post {
     private Theme theme; // 테마
 
 
+    public Post(Integer postId) {
+        this.id = postId;
+    }
 }
