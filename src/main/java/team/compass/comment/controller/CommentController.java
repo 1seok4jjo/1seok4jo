@@ -23,14 +23,16 @@ public class CommentController {
     private final CommentService commentService;
 
     @PostMapping("/{postId}/comment")
-    public ResponseEntity<CommentResponse> commentCreate(@PathVariable Integer postId,
+    public ResponseEntity<CommentResponse> commentCreate(@PathVariable Integer postId,Integer userId,
         @Valid @RequestBody CommentRequest commentRequest) {
 
         commentRequest.setPostId(postId);
-        CommentResponse commentResponse = commentService.registerComment(commentRequest);
+        CommentResponse commentResponse = commentService.registerComment(commentRequest,postId,userId);
 
         return ResponseEntity.ok(commentResponse);
     }
+}
+    /*
     @PutMapping("/{postId}/comment/{commentId}")
     public ResponseEntity<CommentResponse> commentUpdate(@PathVariable Integer postId,
         @PathVariable Integer commentId,
@@ -50,3 +52,5 @@ public class CommentController {
         return ResponseEntity.ok().build();
     }
 }
+
+     */
