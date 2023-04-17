@@ -6,6 +6,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
+import team.compass.user.repository.RefreshTokenRepository;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -22,12 +23,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtTokenProvider jwtTokenProvider;
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String token = resolveToken(request);
+        String token = jwtTokenProvider.resolveToken(request);
 
         if(StringUtils.hasText(token) && jwtTokenProvider.validateToken(token) == 1) {
             Authentication authentication = jwtTokenProvider.getAuthentication(token);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
+
 
         filterChain.doFilter(request, response);
 
@@ -44,24 +46,24 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 //                    this.setAuthentication(token);
 //                } else if(validToken == 2) {
 //                    // 만료
-//                    response.setContentType("application/json");
-//                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-//                    response.setCharacterEncoding("UTF-8");
-//                    PrintWriter out = response.getWriter();
-//                    out.println("{\"error\": \"ACCESS_TOKEN_EXPIRED\", \"message\" : \"엑세스토큰이 만료되었습니다.\"}");
+////                    response.setContentType("application/json");
+////                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+////                    response.setCharacterEncoding("UTF-8");
+////                    PrintWriter out = response.getWriter();
+////                    out.println("{\"error\": \"ACCESS_TOKEN_EXPIRED\", \"message\" : \"엑세스토큰이 만료되었습니다.\"}");
 //                } else {
-//                    response.setContentType("application/json");
-//                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-//                    response.setCharacterEncoding("UTF-8");
-//                    PrintWriter out = response.getWriter();
-//                    out.println("{\"error\": \"BAD_TOKEN\", \"message\" : \"잘못된 토큰 값입니다.\"}");
+////                    response.setContentType("application/json");
+////                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+////                    response.setCharacterEncoding("UTF-8");
+////                    PrintWriter out = response.getWriter();
+////                    out.println("{\"error\": \"BAD_TOKEN\", \"message\" : \"잘못된 토큰 값입니다.\"}");
 //                }
 //            } else {
-//                response.setContentType("application/json");
-//                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-//                response.setCharacterEncoding("UTF-8");
-//                PrintWriter out = response.getWriter();
-//                out.println("{\"error\": \"EMPTY_TOKEN\", \"message\" : \"토큰 값이 비어있습니다.\"}");
+////                response.setContentType("application/json");
+////                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+////                response.setCharacterEncoding("UTF-8");
+////                PrintWriter out = response.getWriter();
+////                out.println("{\"error\": \"EMPTY_TOKEN\", \"message\" : \"토큰 값이 비어있습니다.\"}");
 //            }
 //        }
 

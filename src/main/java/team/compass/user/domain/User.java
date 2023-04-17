@@ -8,10 +8,13 @@ import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import team.compass.user.dto.UserRequestDto;
+import team.compass.user.dto.UserRequest;
 
 import javax.persistence.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 @Entity
@@ -19,28 +22,25 @@ import java.util.stream.Collectors;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "user")
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "userId", nullable = false)
+    @Column(nullable = false)
     private Integer userId;
 
-    @Column(name = "email", unique = true, nullable = false)
+    @Column(unique = true, nullable = false)
     private String email;
-    @Column(name = "password", nullable = false)
+    @Column(nullable = false)
     private String password;
-    @Column(name = "nickName")
     private String nickName;
-    @Column(name = "introduction")
     private String introduction;
-    @Column(name = "emailAuthKey")
     private String emailAuthKey;
-    @Column(name = "resetPasswordKey")
     private String resetPasswordKey;
 
-    @Column(name = "kakaoId")
-    private String kakaoId;
+    private String userBannerImgUrl;
+    private String userProfileImgUrl;
+
+    private String loginType;
 
     // 권한 추가?????
     @ElementCollection(fetch = FetchType.EAGER)
@@ -86,7 +86,7 @@ public class User implements UserDetails {
         return true;
     }
 
-    public static User from(UserRequestDto.SignUp parameter) {
+    public static User from(UserRequest.SignUp parameter) {
         return User.builder()
                 .email(parameter.getEmail().toLowerCase(Locale.ROOT))
                 .password(parameter.getPassword())
