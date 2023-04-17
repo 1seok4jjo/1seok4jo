@@ -41,6 +41,7 @@ public class User implements UserDetails {
 
     @Column(name = "kakaoId")
     private String kakaoId;
+    private String profileImageUrl;
 
     // 권한 추가?????
     @ElementCollection(fetch = FetchType.EAGER)
