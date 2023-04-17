@@ -24,6 +24,9 @@ public class PostResponse {
     private String hashtag; // 해시태그 (프론트에서 받아옴, #마다 잘라서 문자로 들어옴)
     private String startDate; // 여행 시작일 (프론트에서 문자열로 받아옴)
     private String endDate; // 여행 끝난일 (프론트에서 문자열로 받아옴)
+
+    private final String baseUrl = "https://compass-s3-bucket.s3.ap-northeast-2.amazonaws.com/"; // 추가
+
     private List<String> storeFileUrl;
     private Integer likeCount;
     private String nickname;

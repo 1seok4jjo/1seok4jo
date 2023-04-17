@@ -2,34 +2,37 @@ package team.compass.comment.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import team.compass.photo.util.post.domain.Post;
 import team.compass.user.domain.User;
-import team.compass.post.domain.Post;
+
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column
-    private Long commentId;
+    private Integer commentId;
     @ManyToOne //comment(M) User(O)
-    @JoinColumn
-    private User writer;
+    @JoinColumn(name = "user_id")
+    private User user;
     @ManyToOne //comment(M) Post(O)
-    @JoinColumn
+    @JoinColumn(name = "post_id")
     private Post post;
-    @Column
     private String content;
-    @Column
     private LocalDateTime createdTime;
-
-
+    private LocalDateTime updateTime;
+    public void updateContent(String content) {
+        this.content = content;
+    }
 }
+

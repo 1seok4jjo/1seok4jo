@@ -2,7 +2,6 @@ package team.compass.post.service;
 
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -58,7 +57,7 @@ public class PostServiceImpl implements PostService {
                 .orElseThrow(() -> new IllegalStateException("없는 테마입니다."));
         createPost.setTheme(theme); // flush 오류 -> 영속성 컨텍스트에 없어서 불러오기 // 받아온 테마 id 넣어주기
         Post post = postRepository.save(createPost); // 글 저장  == Post 저장 // 그 결과값들 postRepo 저장해서 다시 post로 묶어주기
-        List<PostPhoto> list = getPhotos(multipartFile, user, post); // 마지막으로 postPhoto에 리스트로 받아오기
+        List<PostPhoto> list = savePhotos(multipartFile, user, post); // 마지막으로 postPhoto에 리스트로 받아오기
         postPhotoRepository.saveAll(list); // 받아온 데이터들 postPhotoRepo 저장
         return post;
     }
@@ -84,7 +83,7 @@ public class PostServiceImpl implements PostService {
 
         postRepository.save(udPost); // 업데이트로 쓰인 데이터들 repo 저장
         //사진 저장
-        List<PostPhoto> list = getPhotos(multipartFile, user, udPost);
+        List<PostPhoto> list = savePhotos(multipartFile, user, udPost);
         //이전의 사진데이터 삭제 -> 기준이 없기에
         List<PostPhoto> photos = udPost.getPhotos();
         postPhotoRepository.deleteAll(photos);
@@ -99,16 +98,23 @@ public class PostServiceImpl implements PostService {
      * 함으로써 Post 삭제시 photos 도 삭제됨.
      * 처리 안 할 경우에 null 이 돼서 fk 가 보는 곳이 없어짐. 아니면 null 처리가 따로 있다던지..
      */
+//    @Override
+//    @Transactional
+//    public void delete(Integer postId) {
+//        postRepository.deleteById(postId); // 삭제
+//    }
+
     @Override
     @Transactional
-    public void delete(Integer postId) {
+    public boolean delete(Integer postId) {
         postRepository.deleteById(postId); // 삭제
+        return true;
     }
 
     /**
      * 사진 저장
      */
-    private List<PostPhoto> getPhotos(List<MultipartFile> multipartFile, User user, Post post) {
+    private List<PostPhoto> savePhotos(List<MultipartFile> multipartFile, User user, Post post) {
         List<PostPhoto> list = new ArrayList<>(); // 사진 저장 리스트
         for (MultipartFile file : multipartFile) {
             PhotoDto photoDto = fileUploadService.save(file); // 하나씩 리스트로 저장
@@ -149,20 +155,30 @@ public class PostServiceImpl implements PostService {
         // 2번 째
         //...
         // select -> in 쿼리로 (like를 묶어서 5개의 글 조회하는 것임. 현재 5개로 설정해둔 상태)
-        for (Post post : postList) { // post 리스트를 postDto list 에 더해준다.
-            result.add(new PostDto(
-                    post.getId(),
-                    // like
-                    post.getLikes().size(),
-                    // photo list 형식이니 stream
-                    post.getPhotos().stream().map(i -> i.getPhoto().getStoreFileUrl()).collect(Collectors.toList()),
-                    post.getTitle(),
-                    post.getLocation(),
-                    post.getStartDate(),
-                    post.getEndDate())
-            );
-        }
-        List<PostDto> postResult = result; // 그 담아진 결과 5개를 다시 담아서 리턴
-        return postResult;
+        return postList.stream().map(post -> new PostDto( // 📌멘토님의 제안안 stream 으로 반환하기. o
+                post.getId(),
+                // like
+                post.getLikes().size(),
+                // photo list 형식이니 stream
+                post.getPhotos().stream().map(i -> i.getPhoto().getStoreFileUrl()).collect(Collectors.toList()),
+                post.getTitle(),
+                post.getLocation(),
+                post.getStartDate(),
+                post.getEndDate())).collect(Collectors.toList());
+//        for (Post post : postList) { // post 리스트를 postDto list 에 더해준다.
+//            result.add(new PostDto(
+//                    post.getId(),
+//                    // like
+//                    post.getLikes().size(),
+//                    // photo list 형식이니 stream
+//                    post.getPhotos().stream().map(i -> i.getPhoto().getStoreFileUrl()).collect(Collectors.toList()),
+//                    post.getTitle(),
+//                    post.getLocation(),
+//                    post.getStartDate(),
+//                    post.getEndDate())
+//            );
+//        }
+//        List<PostDto> postResult = result; // 그 담아진 결과 5개를 다시 담아서 리턴
+//        return postResult;
     }
 }

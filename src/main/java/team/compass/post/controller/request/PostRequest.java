@@ -25,16 +25,17 @@ public class PostRequest {
     private Integer themeId;
 
     // DTO - ENTITY (toEntity를 DTO 에서 해주는 것.) Entity 는 테이블 그 자체이기에 건들면 위험함
-    public Post toEntity() {
-        return Post.builder()
-                .title(title)
-                .detail(detail)
-                .location(location) // 지역
-                .hashtag(hashtag) // 해시태그
-                .startDate(startDate)
-                .endDate(endDate)
-                .theme(new Theme(this.themeId))
-                .createdAt(LocalDateTime.now())
-                .build();
-    }
+//    public Post toEntity() {
+//        return Post.builder()
+//                .title(title)
+//                .detail(detail)
+//                .location(location) // 지역
+//                .hashtag(hashtag) // 해시태그
+//                .startDate(startDate)
+//                .endDate(endDate)
+//                .theme(new Theme(this.themeId))
+//                .createdAt(LocalDateTime.now())
+//                .build();
+//    }
+    // from (param 1), of (N개, 너무 많지 않게..)
 }
