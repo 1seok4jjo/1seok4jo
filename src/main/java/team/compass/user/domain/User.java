@@ -37,9 +37,11 @@ public class User implements UserDetails {
     private String emailAuthKey;
     private String resetPasswordKey;
 
-    private String userBannerImgUrl;
-    private String userProfileImgUrl;
 
+    @Column(name = "kakaoId")
+    private String kakaoId;
+    private String profileImageUrl;
+    private String userBannerImgUrl;
     private String loginType;
 
     // 권한 추가?????
