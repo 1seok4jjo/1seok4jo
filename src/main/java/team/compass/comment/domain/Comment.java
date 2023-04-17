@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import team.compass.photo.util.post.domain.Post;
+import team.compass.post.domain.Post;
 import team.compass.user.domain.User;
 
 

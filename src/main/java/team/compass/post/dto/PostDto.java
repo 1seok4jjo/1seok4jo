@@ -14,7 +14,7 @@ public class PostDto {
     private Integer postId;
     private Integer likeCount;
 
-    private final String baseUrl = "https://compass-s3-bucket.s3.ap-northeast-2.amazonaws.com/"; // 기본 주소 추가
+    private final String baseUrl = "https://compass-s3-bucket.s3.ap-northeast-2.amazonaws.com/";
 
     private List<String> storeFileUrl;
 
