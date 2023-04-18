@@ -13,4 +13,5 @@ public class SearchRequest {
     private String title;
     private String detail;
     private String hashtag;
+    private String pageNum;
 }
