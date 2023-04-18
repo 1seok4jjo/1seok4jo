@@ -29,8 +29,24 @@ public class PostResponse {
 
     private List<String> storeFileUrl;
     private Integer likeCount;
+
+    private Long commentCount;
     private String nickname;
 
+    public PostResponse(Post post, Long aLong) {
+        this.id = post.getId();
+        this.title = post.getTitle();
+        this.detail = post.getDetail();
+        this.location = post.getLocation();
+        this.createdAt = post.getCreatedAt();
+        this.hashtag = post.getHashtag();
+        this.startDate = post.getStartDate();
+        this.endDate = post.getEndDate();
+        this.storeFileUrl = post.getPhotos().stream().map(i->i.getPhoto().getStoreFileUrl()).collect(Collectors.toList());
+        this.likeCount = post.getLikes().size();
+        this.commentCount=aLong;
+        this.nickname=post.getUser().getNickName();
+    }
     public PostResponse(Post post) {
         this.id = post.getId();
         this.title = post.getTitle();
@@ -44,5 +60,6 @@ public class PostResponse {
         this.likeCount = post.getLikes().size();
         this.nickname=post.getUser().getNickName();
     }
+
 
 }

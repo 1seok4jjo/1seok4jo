@@ -81,7 +81,7 @@ public class UserServiceImpl implements UserService {
         String encodedPassword = passwordEncoder.encode(parameter.getPassword());
 
         User updateUser = User.builder()
-                            .userId(user.getUserId())
+                            .id(user.getId())
                             .email(user.getEmail())
                             .password(encodedPassword)
                             .build();

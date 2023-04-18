@@ -56,9 +56,7 @@ public class PostController {
     @Transactional
     public ResponseEntity<Object> postWrite(
             @RequestPart(value = "data") PostRequest postRequest, // request post 로 받아오기. 내용들
-            @RequestPart(value = "images") List<MultipartFile> images,
-    Theme theme) { // 이미지 받아오기
-
+            @RequestPart(value = "images") List<MultipartFile> images) { // 이미지 받아오기
         validationPhoto(images); // 유효성 검증(이미지 최대 5개까지 받아올 수 있게)
         User user = userRepository.findById(1)
                 .orElseThrow(() -> new IllegalArgumentException("해당 유저가 없습니다.")); // 임시로 넣어둔 유저
@@ -119,10 +117,10 @@ public class PostController {
     @Transactional(readOnly = true)
     @GetMapping(value = "/post/{postId}")
     public ResponseEntity<Object> getPost(@PathVariable Integer postId) {
-        Post post = postService.getPost(postId);
-//        return ResponseEntity.ok(new PostResponse(post));
+        PostResponse post = postService.getPost(postId);
+
         if (post != null) {
-            return ResponseUtils.ok("글 조회에 성공하였습니다.", new PostResponse(post));
+            return ResponseUtils.ok("글 조회에 성공하였습니다.", post);
         } else {
             return ResponseUtils.notFound("해당 글을 찾을 수 없습니다.");
         }

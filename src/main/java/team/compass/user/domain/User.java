@@ -25,8 +25,8 @@ import java.util.stream.Collectors;
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(nullable = false)
-    private Integer userId;
+    @Column(nullable = false,name = "user_id")
+    private Integer id;
 
     @Column(unique = true, nullable = false)
     private String email;
