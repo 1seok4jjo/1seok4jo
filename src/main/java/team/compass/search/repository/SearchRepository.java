@@ -1,6 +1,7 @@
 package team.compass.search.repository;
 
 import org.apache.ibatis.annotations.Param;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import team.compass.post.domain.Post;
 
