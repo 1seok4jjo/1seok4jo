@@ -108,6 +108,27 @@ public class UserServiceImpl implements UserService {
         refreshTokenRepository.setBlackList(accessToken, expiration);
     }
 
+    @Override
+    public void withdraw(HttpServletRequest request) {
+        String accessToken = jwtTokenProvider.resolveToken(request);
+
+        Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
+
+        RefreshToken refreshToken = refreshTokenRepository.findByEmail(authentication.getName())
+                .orElseThrow(() -> new RuntimeException("해당 유저 토큰 정보가 없습니다."));
+
+        refreshTokenRepository.delete(refreshToken);
+
+        Long expiration = jwtTokenProvider.getExpiration(accessToken);
+
+        refreshTokenRepository.setBlackList(accessToken, expiration);
+
+        User user = memberRepository.findByEmail(authentication.getName())
+                .orElseThrow(() -> new RuntimeException("해당 유저 정보가 없습니다."));
+
+        memberRepository.delete(user);
+    }
+
 
     @Transactional
     @Override

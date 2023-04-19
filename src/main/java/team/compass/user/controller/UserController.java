@@ -71,4 +71,12 @@ public class UserController {
         userService.logout(request);
         return ResponseUtils.ok("로그아웃 완료하였습니다.", true);
     }
+
+    @DeleteMapping("/withdraw")
+    public ResponseEntity<?> withdraw(
+            HttpServletRequest request
+    ){
+        userService.withdraw(request);
+        return ResponseUtils.ok("회원탈퇴를 완료하였습니다.", true);
+    }
 }
