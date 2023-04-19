@@ -35,6 +35,7 @@ public class SearchServiceImpl implements SearchService {
                                 .id(item.getId())
                                 .title(item.getTitle())
                                 .detail(item.getDetail())
+                                .hashtag(item.getHashtag())
                                 .location(item.getDetail())
                                 .createdAt(item.getCreatedAt())
                                 .build()
@@ -50,13 +51,13 @@ public class SearchServiceImpl implements SearchService {
 
         if(StringUtils.hasText(parameter.getTitle())){
             optionalPosts = searchRepository
-                    .findAllByTitleContainingOrderByCreatedAtDesc(parameter.getTitle(), pageable);
+                    .findAllByTitleContainingIgnoreCaseOrderByCreatedAtDesc(parameter.getTitle(), pageable);
         } else if(StringUtils.hasText(parameter.getDetail())) {
             optionalPosts = searchRepository
-                    .findAllByDetailContainingOrderByCreatedAtDesc(parameter.getDetail(), pageable);
+                    .findAllByDetailContainingIgnoreCaseOrderByCreatedAtDesc(parameter.getDetail(), pageable);
         } else if(StringUtils.hasText(parameter.getHashtag())) {
             optionalPosts = searchRepository
-                    .findAllByHashtagContainingOrderByCreatedAtDesc(parameter.getHashtag(), pageable);
+                    .findAllByHashtagContainingIgnoreCaseOrderByCreatedAtDesc(parameter.getHashtag(), pageable);
         }
 
         Page<Post> postPage = optionalPosts
