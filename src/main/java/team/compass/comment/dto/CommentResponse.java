@@ -15,14 +15,15 @@ public class CommentResponse {
     private String content;
     private String imageUrl;
     private LocalDateTime updatedAt;
-
     private LocalDateTime createdAt;
+
+
 
     public static CommentResponse responseComment(Comment comment, User user) {
 
         CommentResponseBuilder builder = CommentResponse.builder()
-            .commentId(comment.getCommentId())
-            .userId(user.getUserId())
+            .commentId(comment.getId())
+            .userId(user.getId())
             .nickName(user.getNickName())
             .imageUrl(user.getProfileImageUrl())
             .content(comment.getContent())
@@ -33,8 +34,8 @@ public class CommentResponse {
     public static CommentResponse fromEntity(Comment comment) {
 
         CommentResponseBuilder builder = CommentResponse.builder()
-            .commentId(comment.getCommentId())
-            .userId(comment.getUser().getUserId())
+            .commentId(comment.getId())
+            .userId(comment.getUser().getId())
             .nickName(comment.getUser().getNickName())
             .imageUrl(comment.getUser().getProfileImageUrl())
             .content(comment.getContent())
