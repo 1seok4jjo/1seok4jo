@@ -11,4 +11,7 @@ public interface SearchRepository extends JpaRepository<Post, Integer> {
     // 제목
     Optional<List<Post>> findAllByTitleContaining(@Param("title") String title);
 
+    //내용
+    Optional<List<Post>> findAllByDetailContaining(@Param("detail") String detail);
+
 }
