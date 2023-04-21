@@ -1,14 +1,18 @@
 package team.compass.comment.repository;
 
 
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import team.compass.comment.domain.Comment;
 
-import java.util.Optional;
+import team.compass.post.domain.Post;
 
 @Repository
 public interface CommentRepository extends JpaRepository<Comment,Integer> {
-    // Post »ó¼¼ ±Û º¸±â ´ñ±Û ¼ö È®ÀÎ
+    // Post ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ È®ï¿½ï¿½
     Long countByPostId(Integer postId);
+
+
+    List<Comment> findAllByPostIdAndPost(Integer postId, Post post);
 }

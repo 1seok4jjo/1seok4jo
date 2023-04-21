@@ -1,16 +1,18 @@
 package team.compass.comment.service;
 
 
+import java.util.List;
+import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import team.compass.comment.domain.Comment;
-import team.compass.comment.dto.CommentResponse;
 import team.compass.comment.dto.CommentRequest;
+import team.compass.comment.dto.CommentResponse;
 import team.compass.comment.repository.CommentRepository;
-import team.compass.photo.util.post.repository.PostRepository;
+import team.compass.post.domain.Post;
+import team.compass.post.repository.PostRepository;
 import team.compass.user.domain.User;
-import team.compass.photo.util.post.domain.Post;
 import team.compass.user.repository.UserRepository;
 
 @Service
@@ -34,13 +36,23 @@ public class CommentService {
         return CommentResponse.responseComment(newComment, writer);
     }
     //댓글조회
+    public List<CommentResponse> getCommentListByPostId(CommentRequest request){
+        Post post = postRepository.findById(request.getPostId())
+            .orElseThrow(() -> new RuntimeException("해당 게시글을 찾을 수 없습니다"));
+
+        List<Comment> commentList = commentRepository.findAllByPostIdAndPost(request.getPostId(),post);
+
+       return commentList.stream()
+           .map(CommentResponse::fromEntity)
+           .collect(Collectors.toList());
+    }
 
 //댓글수정
     public CommentResponse updateComment(Integer commentId, CommentRequest request) {
         Comment comment = commentRepository.findById(commentId)
             .orElseThrow(() -> new RuntimeException("해당 댓글을 찾을 수 없습니다."));
 
-        if (!comment.getUser().getUserId().equals(request.getUserId())) {
+        if (!comment.getUser().getId().equals(request.getUserId())) {
             throw new RuntimeException("댓글은 댓글을 쓴 사람만 수정 할 수 있습니다.");
         }
         comment.updateContent(request.getContent());
