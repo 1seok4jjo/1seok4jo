@@ -1,4 +1,4 @@
-package team.compass.search.dto;
+package team.compass.user.dto;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -10,10 +10,7 @@ import java.util.List;
 @Getter
 @Setter
 @Builder
-public class SearchResponse {
-    private String keyword;
-    private Long count;
-    private List<PostResponse> searchPostList;
-
-
+public class UserPostResponse {
+    Long count;
+    private List<PostResponse> userPostList;
 }

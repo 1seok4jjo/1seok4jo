@@ -1,28 +1,33 @@
 package team.compass.user.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import team.compass.common.config.JwtTokenProvider;
+import team.compass.post.controller.response.PostResponse;
+import team.compass.post.domain.Post;
+import team.compass.post.repository.PostRepository;
 import team.compass.user.domain.RefreshToken;
 import team.compass.user.domain.User;
-import team.compass.user.dto.TokenDto;
-import team.compass.user.dto.UserRequest;
-import team.compass.user.dto.UserSignUpType;
-import team.compass.user.dto.UserUpdate;
+import team.compass.user.dto.*;
 import team.compass.user.repository.RefreshTokenRepository;
 import team.compass.user.repository.UserRepository;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-    private final PasswordEncoder passwordEncoder;
     private final UserRepository memberRepository;
+    private final PostRepository postRepository;
+    private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
 
@@ -81,7 +86,7 @@ public class UserServiceImpl implements UserService {
         String encodedPassword = passwordEncoder.encode(parameter.getPassword());
 
         User updateUser = User.builder()
-                            .userId(user.getUserId())
+                            .id(user.getId())
                             .email(user.getEmail())
                             .password(encodedPassword)
                             .build();
@@ -175,4 +180,82 @@ public class UserServiceImpl implements UserService {
 
         return tokenDto;
     }
+
+
+    @Override
+    public UserPostResponse getUserByPost(HttpServletRequest request) {
+        Page<Post> postList = getPostList(request);
+        return UserPostResponse.builder()
+                .count(postList.getTotalElements())
+                .userPostList(
+                        postList.stream().map(item ->
+                            PostResponse.builder()
+                                    .id(item.getId())
+                                    .title(item.getTitle())
+                                    .detail(item.getDetail())
+                                    .hashtag(item.getHashtag())
+                                    .location(item.getLocation())
+                                    .createdAt(item.getCreatedAt())
+                                    .build()
+                        ).collect(Collectors.toList())
+                )
+                .build();
+    }
+
+
+    @Override
+    public UserPostResponse getUserLikeByPost(HttpServletRequest request) {
+        Page<Post> postList = getLikePostList(request);
+
+        return UserPostResponse.builder()
+                .count(postList.getTotalElements())
+                .userPostList(
+                        postList.stream().map(item ->
+                                PostResponse.builder()
+                                        .id(item.getId())
+                                        .title(item.getTitle())
+                                        .detail(item.getDetail())
+                                        .hashtag(item.getHashtag())
+                                        .location(item.getLocation())
+                                        .createdAt(item.getCreatedAt())
+                                        .build()
+                        ).collect(Collectors.toList())
+                )
+                .build();
+    }
+
+    private Page<Post> getPostList(HttpServletRequest request) {
+        Pageable pageable = PageRequest.of(0, 10);
+
+        String accessToken = jwtTokenProvider.resolveToken(request);
+
+
+        Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
+
+        User user = memberRepository.findByEmail(authentication.getName())
+                .orElseThrow(() -> new RuntimeException("해당 유저가 없습니다."));
+
+        Page<Post> postPage = postRepository.findAllByUser_Id(user.getId(), pageable)
+                .orElse(null);
+
+        return postPage;
+    }
+
+    private Page<Post> getLikePostList(HttpServletRequest request) {
+        Pageable pageable = PageRequest.of(0, 10);
+
+        String accessToken = jwtTokenProvider.resolveToken(request);
+        Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
+
+        User user = memberRepository.findByEmail(authentication.getName())
+                .orElseThrow(() -> new RuntimeException("해당 유저가 없습니다."));
+
+        Page<Post> postPage = postRepository.findAllByUser_IdAndLikes(user.getId(), pageable)
+                .orElse(null);
+
+        return postPage;
+    }
+
+
+
 }

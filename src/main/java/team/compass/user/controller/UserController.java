@@ -7,10 +7,7 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 import team.compass.common.utils.ResponseUtils;
 import team.compass.user.domain.User;
-import team.compass.user.dto.TokenDto;
-import team.compass.user.dto.UserRequest;
-import team.compass.user.dto.UserResponse;
-import team.compass.user.dto.UserUpdate;
+import team.compass.user.dto.*;
 import team.compass.user.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -78,5 +75,26 @@ public class UserController {
     ){
         userService.withdraw(request);
         return ResponseUtils.ok("회원탈퇴를 완료하였습니다.", true);
+    }
+
+
+
+
+    // 해당 유저 작성 글 조회
+    @GetMapping("/post")
+    public ResponseEntity<?> getUserByPost(HttpServletRequest request) {
+        UserPostResponse postResponse = userService.getUserByPost(request);
+
+        if(ObjectUtils.isEmpty(postResponse)) {
+            return ResponseUtils.badRequest("작성 게시글 조회에 실패했습니다.");
+        }
+        return ResponseUtils.ok("해당 유저가 작성한 게시글 조회에 성공했습니다.", postResponse);
+    }
+
+    @GetMapping("/like-post")
+    public ResponseEntity<?> getUserLikeByPost(HttpServletRequest request) {
+        UserPostResponse postResponse = userService.getUserLikeByPost(request);
+
+        return ResponseUtils.ok("해당 유저가 좋아요한 게시글 조회에 성공했습니다.", postResponse);
     }
 }

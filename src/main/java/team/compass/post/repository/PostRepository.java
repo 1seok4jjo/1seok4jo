@@ -1,11 +1,14 @@
 package team.compass.post.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import team.compass.post.domain.Post;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -32,6 +35,13 @@ public interface PostRepository extends JpaRepository<Post,Integer> {
 //
 //    @Query("select p from Post p left join fetch p.photos pp join fetch pp.photo where p.id in(:id)") // 사진까지 같이 긁어오기
 //    List<Post> findListById(@Param(value = "id") List<Integer> id); // photo -> main page
+
+
+    // 해당 유저 작성 글 조회
+    Optional<Page<Post>> findAllByUser_Id(Integer id, Pageable pageable);
+
+    // 해당 유저 좋아요 클릭한 글 조회
+    Optional<Page<Post>> findAllByUser_IdAndLikes(Integer id, Pageable pageable);
 
 }
 
