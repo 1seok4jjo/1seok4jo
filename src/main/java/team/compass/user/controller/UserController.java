@@ -1,15 +1,12 @@
 package team.compass.user.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.apache.tomcat.util.http.ResponseUtil;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import team.compass.common.utils.ResponseUtils;
-import team.compass.like.repository.LikeRepository;
-import team.compass.like.service.LikeService;
 import team.compass.user.domain.User;
 import team.compass.user.dto.*;
 import team.compass.user.service.UserService;
@@ -22,7 +19,6 @@ import java.util.Map;
 @RestController
 public class UserController {
     private final UserService userService;
-    private final LikeService likeService;
 
     @PostMapping("/signup")
     public ResponseEntity<?> signup(
@@ -116,7 +112,7 @@ public class UserController {
 
     @GetMapping("/like-post")
     public ResponseEntity<?> getUserLikeByPost(HttpServletRequest request) {
-        UserPostResponse postResponse = userService.getUserLikeByPost(request);
+        UserPostResponse postResponse = userService.getUserByLikePost(request);
 
         return ResponseUtils.ok("해당 유저가 좋아요한 게시글 조회에 성공했습니다.", postResponse);
     }

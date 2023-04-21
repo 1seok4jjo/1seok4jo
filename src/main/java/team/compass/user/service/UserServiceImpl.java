@@ -67,11 +67,7 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
-    private String savePhotos(MultipartFile img) {
-        PhotoDto photoDto = fileUploadService.save(img);
 
-        return photoDto.getStoreFileUrl();
-    }
 
 
     @Override
@@ -115,7 +111,7 @@ public class UserServiceImpl implements UserService {
         String encodedPassword = passwordEncoder.encode(parameter.getPassword());
 
         User updateUser = User.builder()
-                            .userId(user.getUserId())
+                            .id(user.getId())
                             .email(user.getEmail())
                             .password(encodedPassword)
                             .build();
@@ -138,6 +134,7 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new RuntimeException("해당 유저 토큰 정보가 없습니다."));
 
         refreshTokenRepository.delete(token);
+
         Long expiration = jwtTokenProvider.getExpiration(accessToken);
 
         refreshTokenRepository.setBlackList(accessToken, expiration);
@@ -147,8 +144,8 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void withdraw(HttpServletRequest request) {
         String accessToken = jwtTokenProvider.resolveToken(request);
-
         Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
+
 
         RefreshToken refreshToken = refreshTokenRepository.findByEmail(authentication.getName())
                 .orElseThrow(() -> new RuntimeException("해당 유저 토큰 정보가 없습니다."));
@@ -165,44 +162,11 @@ public class UserServiceImpl implements UserService {
         memberRepository.delete(user);
     }
 
-    @Override
-    @Transactional
-    public UserPostResponse getUserByLikePost(HttpServletRequest request) {
-        Page<Post> postPage = getPostList(request);
-
-
-        return UserPostResponse.builder()
-                .count(postPage.getTotalElements())
-                .postResponseList(
-                        postPage.stream()
-                                .map(item ->
-                                        PostResponse.builder()
-                                                .id(item.getId())
-                                                .title(item.getTitle())
-                                                .detail(item.getDetail())
-                                                .hashtag(item.getHashtag())
-                                                .location(item.getDetail())
-                                                .createdAt(item.getCreatedAt())
-                                                .build()
-                                        ).collect(Collectors.toList())
-                )
-                .build();
-    }
-
-    private Page<Post> getPostList(HttpServletRequest request) {
-        Pageable pageable = PageRequest.of(0, 10);
-
-        String accessToken = jwtTokenProvider.resolveToken(request);
-
-        Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
-
-        User user = memberRepository.findByEmail(authentication.getName())
-                .orElseThrow(() -> new RuntimeException("해당 유저 정보가 없습니다."));
-//        Page<Post> postPage = postRepository.findAllByUser_IdAndLikes(user.getId(), pageable)
-//                .orElseThrow(() -> new RuntimeException("해당 페이지 정보가 없습니다."));
-
-        return null;
-    }
+//    private Authentication getUserByAccessToken(HttpServletRequest request) {
+//        String accessToken = jwtTokenProvider.resolveToken(request);
+//
+//        return jwtTokenProvider.getAuthentication(accessToken);
+//    }
 
 
     @Transactional
@@ -254,45 +218,17 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserPostResponse getUserByPost(HttpServletRequest request) {
-        Page<Post> postList = getPostList(request);
-        return UserPostResponse.builder()
-                .count(postList.getTotalElements())
-                .userPostList(
-                        postList.stream().map(item ->
-                            PostResponse.builder()
-                                    .id(item.getId())
-                                    .title(item.getTitle())
-                                    .detail(item.getDetail())
-                                    .hashtag(item.getHashtag())
-                                    .location(item.getLocation())
-                                    .createdAt(item.getCreatedAt())
-                                    .build()
-                        ).collect(Collectors.toList())
-                )
-                .build();
+        Page<Post> postPage = getPostList(request);
+        return UserPostResponse.build(postPage);
     }
 
 
     @Override
-    public UserPostResponse getUserLikeByPost(HttpServletRequest request) {
-        Page<Post> postList = getLikePostList(request);
-
-        return UserPostResponse.builder()
-                .count(postList.getTotalElements())
-                .userPostList(
-                        postList.stream().map(item ->
-                                PostResponse.builder()
-                                        .id(item.getId())
-                                        .title(item.getTitle())
-                                        .detail(item.getDetail())
-                                        .hashtag(item.getHashtag())
-                                        .location(item.getLocation())
-                                        .createdAt(item.getCreatedAt())
-                                        .build()
-                        ).collect(Collectors.toList())
-                )
-                .build();
+    public UserPostResponse getUserByLikePost(HttpServletRequest request) {
+        Page<Post> postPage = getLikePostList(request);
+        return UserPostResponse.build(postPage);
     }
+
 
     private Page<Post> getPostList(HttpServletRequest request) {
         Pageable pageable = PageRequest.of(0, 10);
@@ -326,6 +262,17 @@ public class UserServiceImpl implements UserService {
         return postPage;
     }
 
+
+    /**
+     * 사진 저장
+     * @param img form-data img upload
+     * @return img path 경로
+     */
+    private String savePhotos(MultipartFile img) {
+        PhotoDto photoDto = fileUploadService.save(img);
+
+        return photoDto.getStoreFileUrl();
+    }
 
 
 }

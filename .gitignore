@@ -37,4 +37,4 @@ out/
 .vscode/
 
 **/frontend/
-application.properties
+**/src/main/resources
