@@ -14,7 +14,7 @@ public class PostDto {
     private Integer postId;
     private Integer likeCount;
 
-    private final String baseUrl = "https://compass-s3-bucket.s3.ap-northeast-2.amazonaws.com/"; // ±‚∫ª ¡÷º“ √ﬂ∞°
+    private final String baseUrl = "https://compass-s3-bucket.s3.ap-northeast-2.amazonaws.com/"; // Í∏∞Î≥∏ url
 
     private List<String> storeFileUrl;
 

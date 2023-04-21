@@ -1,6 +1,7 @@
 package team.compass.post.service;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import team.compass.post.controller.response.PostResponse;
 import team.compass.post.domain.Post;
@@ -19,7 +20,15 @@ public interface PostService {
 
 
 //    void delete(Integer postId);
-    boolean delete(Integer postId);
+
+    //    @Override
+//    @Transactional
+//    public void delete(Integer postId) {
+//        postRepository.deleteById(postId); // 삭제
+//    }
+
+    @Transactional
+    boolean delete(Integer postId, User user);
 
     PostResponse getPost(Integer postId);
 

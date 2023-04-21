@@ -56,13 +56,13 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
     public Optional<Post> findWithLikeById(@Param(value = "id") Integer id){
 
         EntityGraph<Post> entityGraph = entityManager.createEntityGraph(Post.class);
-        entityGraph.addAttributeNodes("photos","user");
+        entityGraph.addAttributeNodes("photos","user"); // photos(PostPhoto), user 참조
 
         Subgraph<Object> photos = entityGraph.addSubgraph("photos"); // 서브그래프 더해주기
-        photos.addAttributeNodes("photo");
+        photos.addAttributeNodes("photo"); // photo 참조
 
         Map<String,Object> hints = new HashMap<>();
-        hints.put("javax.persistence.fetchgraph", entityGraph);
+        hints.put("javax.persistence.fetchgraph", entityGraph); // 선택한 속성만 조회하기
         return Optional.ofNullable(entityManager.find(Post.class, id, hints));
     }
 }
