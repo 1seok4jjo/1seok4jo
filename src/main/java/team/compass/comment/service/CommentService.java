@@ -33,14 +33,13 @@ public class CommentService {
             .orElseThrow(() -> new RuntimeException("해당 회원을 찾을 수 없습니다"));
 
         Comment newComment = commentRepository.save(request.requestComment(post, writer));
+
         return CommentResponse.responseComment(newComment, writer);
     }
     //댓글조회
-    public List<CommentResponse> getCommentListByPostId(CommentRequest request){
-        Post post = postRepository.findById(request.getPostId())
-            .orElseThrow(() -> new RuntimeException("해당 게시글을 찾을 수 없습니다"));
+    public List<CommentResponse> getCommentListByPostId(Integer postId){
 
-        List<Comment> commentList = commentRepository.findAllByPostIdAndPost(request.getPostId(),post);
+        List<Comment> commentList = commentRepository.findAllByPostId(postId);
 
        return commentList.stream()
            .map(CommentResponse::fromEntity)
