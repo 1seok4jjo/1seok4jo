@@ -9,6 +9,7 @@ import org.hibernate.envers.AuditOverride;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import team.compass.like.domain.Likes;
 import team.compass.user.dto.UserRequest;
 
 import javax.persistence.*;
@@ -27,7 +28,7 @@ import java.util.stream.Collectors;
 public class User extends BaseEntity implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(nullable = false,name = "user_id")
+    @Column(nullable = false)
     private Integer id;
 
     @Column(unique = true, nullable = false)
@@ -50,6 +51,14 @@ public class User extends BaseEntity implements UserDetails {
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> roles = new ArrayList<>();
 
+
+//    @OneToMany
+//    @JoinTable(
+//            name = "post",
+//            joinColumns = @JoinColumn(name = "user_id"),
+//            inverseJoinColumns = @JoinColumn(name = "user_id")
+//    )
+//    private List<Likes> likes;
 
 
 

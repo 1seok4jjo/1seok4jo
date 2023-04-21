@@ -5,24 +5,32 @@ import org.apache.tomcat.util.http.ResponseUtil;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import team.compass.common.utils.ResponseUtils;
+import team.compass.like.repository.LikeRepository;
+import team.compass.like.service.LikeService;
 import team.compass.user.domain.User;
 import team.compass.user.dto.*;
 import team.compass.user.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/member")
 @RestController
 public class UserController {
     private final UserService userService;
+    private final LikeService likeService;
 
     @PostMapping("/signup")
     public ResponseEntity<?> signup(
-            @RequestBody UserRequest.SignUp parameter
-    ) {
-        User user = userService.signUp(parameter);
+            @RequestPart(value = "data") UserRequest.SignUp parameter,
+            MultipartHttpServletRequest request
+            ) {
+        Map<String, MultipartFile> multipartFileMap = request.getFileMap();
+        User user = userService.signUp(parameter, multipartFileMap);
 
         if(ObjectUtils.isEmpty(user)) {
             return ResponseUtils.badRequest("회원가입에 실패하였습니다.");
@@ -49,7 +57,7 @@ public class UserController {
             @RequestBody UserUpdate parameter,
             HttpServletRequest request
     ) {
-        User user = userService.updateUserInfo(parameter, request);
+        User user = userService.updateUser(parameter, request);
 
         if(ObjectUtils.isEmpty(user)) {
             return ResponseUtils.badRequest("해당 유저가 없습니다.");
@@ -75,6 +83,21 @@ public class UserController {
     ){
         userService.withdraw(request);
         return ResponseUtils.ok("회원탈퇴를 완료하였습니다.", true);
+    }
+
+
+    @GetMapping("/post/{type}")
+    public ResponseEntity<?> getByUserPostList(
+            @PathVariable String type,
+            HttpServletRequest request
+    ) {
+        UserPostResponse response = null;
+
+        if(type.equals("like")){
+            response = userService.getUserByLikePost(request);
+        }
+
+        return ResponseUtils.ok("회원 좋아요 글 목록 조회에 성공했습니다.", response);
     }
 
 

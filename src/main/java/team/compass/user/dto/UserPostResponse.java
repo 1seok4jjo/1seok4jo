@@ -11,6 +11,6 @@ import java.util.List;
 @Setter
 @Builder
 public class UserPostResponse {
-    Long count;
-    private List<PostResponse> userPostList;
+    private Long count;
+    private List<PostResponse> postResponseList;
 }
