@@ -10,6 +10,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import team.compass.post.domain.Post;
+import team.compass.user.domain.User;
 
 @Data
 @NoArgsConstructor
@@ -34,6 +35,7 @@ public class PostResponse {
 
     private Long commentCount;
     private String nickname;
+    private String userProfileImage;
 
 
     public PostResponse(Post post, Long commentCount, Integer themeId) {
@@ -49,7 +51,9 @@ public class PostResponse {
         this.likeCount = post.getLikes().size();
         this.commentCount=commentCount;
         this.themeId = themeId;
-        this.nickname=post.getUser().getNickName();
+        User user = post.getUser();
+        this.nickname= user.getNickName();
+        this.userProfileImage = user.getProfileImageUrl();
     }
 
 
