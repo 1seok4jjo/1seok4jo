@@ -9,10 +9,7 @@ import org.springframework.util.StringUtils;
 import team.compass.common.config.JwtTokenProvider;
 import team.compass.user.domain.RefreshToken;
 import team.compass.user.domain.User;
-import team.compass.user.dto.TokenDto;
-import team.compass.user.dto.UserRequest;
-import team.compass.user.dto.UserSignUpType;
-import team.compass.user.dto.UserUpdate;
+import team.compass.user.dto.*;
 import team.compass.user.repository.RefreshTokenRepository;
 import team.compass.user.repository.UserRepository;
 
@@ -43,7 +40,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public TokenDto signIn(UserRequest.SignIn parameter) {
+    public UserResponse signIn(UserRequest.SignIn parameter) {
         User user = memberRepository.findByEmail(parameter.getEmail())
                 .orElseThrow(() -> new RuntimeException("해당 회원이 존재하지 않습니다."));
 
@@ -62,7 +59,9 @@ public class UserServiceImpl implements UserService {
                         .build()
         );
 
-        return jwtTokenProvider.createTokenDto(accessToken, refreshToken);
+//        return jwtTokenProvider.createTokenDto(accessToken, refreshToken);
+
+        return UserResponse.to(user, accessToken);
     }
 
     @Override
@@ -81,7 +80,7 @@ public class UserServiceImpl implements UserService {
         String encodedPassword = passwordEncoder.encode(parameter.getPassword());
 
         User updateUser = User.builder()
-                            .userId(user.getUserId())
+                            .id(user.getId())
                             .email(user.getEmail())
                             .password(encodedPassword)
                             .build();

@@ -5,10 +5,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import team.compass.comment.repository.CommentRepository;
 import team.compass.photo.domain.Photo;
 import team.compass.photo.repository.PhotoRepository;
 import team.compass.photo.repository.PostPhotoRepository;
 import team.compass.photo.service.FileUploadService;
+import team.compass.post.controller.response.PostResponse;
 import team.compass.post.domain.Post;
 import team.compass.post.domain.PostPhoto;
 import team.compass.post.dto.PhotoDto;
@@ -42,10 +44,12 @@ public class PostServiceImpl implements PostService {
 
     private final PostCustomRepository postCustomRepository;
 
+    private final CommentRepository commentRepository;
+
 
     /**
      * 글 작성 (사진 포함 같이)
-     *
+     * <p>
      * 1. post 저장
      * 2. S3 로직 (사진 API), 사진 저장
      * 순서 : 글 -> 사진 -> postPhoto
@@ -69,17 +73,22 @@ public class PostServiceImpl implements PostService {
     @Transactional
     public Post update(Post updatePost, List<MultipartFile> multipartFile, User user, Integer postId) {
         // post 업데이트
-        Post udPost = postRepository.findById(postId)
+        Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다."));
-        udPost.setTitle(updatePost.getTitle()); // 제목
-        udPost.setLocation(updatePost.getLocation()); // 장소
-        udPost.setDetail(updatePost.getDetail()); // 내용
-        // udPost.setCreatedAt(LocalDateTime.now());
-        // 수정일 -> 근데 등록일 기준으로 나중에 정렬하게 되면.. 이슈가 있을 수도?? 나중의 글 -> 새로 쓴 글로 바뀌어서.. -> pk 기준으로 정렬 상관없음
-        udPost.setStartDate(updatePost.getStartDate()); // 여행 시작
-        udPost.setEndDate(updatePost.getEndDate()); // 여행 끝
-        udPost.setHashtag(updatePost.getHashtag()); // 해시태그
-        udPost.setUser(user); // 나중에 Builder 로 다시 변경할것
+
+        if (!post.getUser().getId().equals(user.getId())) {
+            throw new IllegalArgumentException(" 권한없음 ");
+        }
+
+        Post udPost = Post.builder()
+                .title(post.getTitle())
+                .location(post.getLocation())
+                .detail(post.getDetail())
+                .startDate(post.getStartDate())
+                .endDate(post.getEndDate())
+                .hashtag(post.getHashtag())
+                .user(post.getUser())
+                .build();
 
         postRepository.save(udPost); // 업데이트로 쓰인 데이터들 repo 저장
         //사진 저장
@@ -98,15 +107,14 @@ public class PostServiceImpl implements PostService {
      * 함으로써 Post 삭제시 photos 도 삭제됨.
      * 처리 안 할 경우에 null 이 돼서 fk 가 보는 곳이 없어짐. 아니면 null 처리가 따로 있다던지..
      */
-//    @Override
-//    @Transactional
-//    public void delete(Integer postId) {
-//        postRepository.deleteById(postId); // 삭제
-//    }
-
     @Override
     @Transactional
-    public boolean delete(Integer postId) {
+    public boolean delete(Integer postId, User user) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다."));
+        if (!post.getUser().getId().equals(user.getId())) {
+            throw new IllegalArgumentException(" 권한없음 ");
+        }
         postRepository.deleteById(postId); // 삭제
         return true;
     }
@@ -128,14 +136,15 @@ public class PostServiceImpl implements PostService {
      * 해당 글 가져오기
      */
     @Override
-    @Transactional
-    public Post getPost(Integer postId) {
-        List<PostPhoto> photos = postPhotoRepository.findListById(postId);
-        Post post = postRepository.findWithLikeById(postId)
+    @Transactional(readOnly = true)
+    public PostResponse getPost(Integer postId) {
+        Post post = postCustomRepository.findWithLikeById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다."));
-        post.setPhotos(photos); // 사진 추가하고 리턴
-        return post;
+        Integer themeId = post.getTheme().getId();
+        Long commentCount = commentRepository.countByPostId(postId);
+        return new PostResponse(post, commentCount, themeId);
     }
+
 
     /**
      * <해당 테마 글 리스트 조회>

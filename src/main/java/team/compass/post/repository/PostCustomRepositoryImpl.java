@@ -1,12 +1,19 @@
 package team.compass.post.repository;
 
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import team.compass.post.domain.Post;
 
+import javax.persistence.EntityGraph;
 import javax.persistence.EntityManager;
+import javax.persistence.Subgraph;
 import javax.persistence.TypedQuery;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -23,18 +30,39 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
 
         TypedQuery<Post> query=null;
 
-        if (lastId == null) { // ���� lastId �� null �� ���
-            query = entityManager.createQuery(first, Post.class) // ù��° ����
-                    .setParameter("theme", theme); // �ش� �׸� ���̵� �ֱ�
+        if (lastId == null) {
+            query = entityManager.createQuery(first, Post.class)
+                    .setParameter("theme", theme);
         } else {
             query = entityManager
-                    .createQuery(paging, Post.class) // lastId �� ���� ����ε�
-                    .setParameter("theme", theme) // �ش� �׸� ���̵� �ֱ�
-                    .setParameter("lastId", lastId); // lastId �������� �̰ͺ��� ���� �͵� list, orderBy desc
+                    .createQuery(paging, Post.class)
+                    .setParameter("theme", theme)
+                    .setParameter("lastId", lastId); // lastId 기준으로 list, orderBy desc
         }
 
         return query
-                .setMaxResults(10) // 5���� �̾ƿɴϴ�.
+                .setMaxResults(10) // 10개 제한
                 .getResultList(); // list
+    }
+
+    /**
+     *  javax.persistence.fetchgraph 말고도 loadgraph 가 존재한다. 해당 속성은 엔티티 그래프에 선택한
+     *  속성뿐만 아니라 글로벌 fetch 모드가 EAGER로 설정된 연관관계도 포함해 조회하게 된다.
+     *  여기서 사용한 fetchgraph는 선택한 속성만 조회하는 모드이다.
+     *  엔티티 그래프는 항상 ROOT(Post) 에서 시작할 것.
+     *  이미 로딩된 엔티티는 적용되지 않는다. 하지만 아직 초기화 되지 않은 프록시엔 적용 가능!
+     */
+    @Override
+    public Optional<Post> findWithLikeById(@Param(value = "id") Integer id){
+
+        EntityGraph<Post> entityGraph = entityManager.createEntityGraph(Post.class);
+        entityGraph.addAttributeNodes("photos","user"); // photos(PostPhoto), user 참조
+
+        Subgraph<Object> photos = entityGraph.addSubgraph("photos"); // 서브그래프 더해주기
+        photos.addAttributeNodes("photo"); // photo 참조
+
+        Map<String,Object> hints = new HashMap<>();
+        hints.put("javax.persistence.fetchgraph", entityGraph); // 선택한 속성만 조회하기
+        return Optional.ofNullable(entityManager.find(Post.class, id, hints));
     }
 }

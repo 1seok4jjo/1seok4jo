@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 @Service
 public interface UserService {
     User signUp(UserRequest.SignUp parameter);
-    TokenDto signIn(UserRequest.SignIn parameter);
+    UserResponse signIn(UserRequest.SignIn parameter);
 
     User updateUserInfo(UserUpdate parameter, HttpServletRequest request);
 
