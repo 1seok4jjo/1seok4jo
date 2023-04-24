@@ -22,11 +22,14 @@ public class UserController {
 
     @PostMapping("/signup")
     public ResponseEntity<?> signup(
-            @RequestPart(value = "data") UserRequest.SignUp parameter,
-            MultipartHttpServletRequest request
+            @RequestPart(name = "data") UserRequest.SignUp parameter,
+            @RequestPart(name = "files", required = false) MultipartFile[] multiFiles,
+            HttpServletRequest request
             ) {
-        Map<String, MultipartFile> multipartFileMap = request.getFileMap();
-        User user = userService.signUp(parameter, multipartFileMap);
+        MultipartHttpServletRequest multipartHttpServletRequest = (MultipartHttpServletRequest) request;
+
+
+        User user = userService.signUp(parameter, multipartHttpServletRequest);
 
         if(ObjectUtils.isEmpty(user)) {
             return ResponseUtils.badRequest("회원가입에 실패하였습니다.");
@@ -79,6 +82,20 @@ public class UserController {
     ){
         userService.withdraw(request);
         return ResponseUtils.ok("회원탈퇴를 완료하였습니다.", true);
+    }
+
+    @PutMapping("/password/update")
+    public ResponseEntity<?> updatePassword(
+            @RequestBody PasswordInitRequest parameter,
+            HttpServletRequest request
+    ) {
+        UserResponse response = userService.updatePassword(parameter, request);
+
+        if(!ObjectUtils.isEmpty(response)) {
+            return ResponseUtils.ok("패스워드 변경에 성공했습니다.", response);
+        } else {
+            return ResponseUtils.badRequest("패스워드 변경에 실패하였습니다.");
+        }
     }
 
 
