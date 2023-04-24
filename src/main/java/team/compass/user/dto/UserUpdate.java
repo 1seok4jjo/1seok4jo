@@ -11,6 +11,7 @@ import lombok.Setter;
 public class UserUpdate {
     private String password;
     private String introduction;
+    private final String baseUrl = "https://compass-s3-bucket.s3.ap-northeast-2.amazonaws.com/";
     private String userBannerImgUrl;
     private String userProfileImgUrl;
 }
