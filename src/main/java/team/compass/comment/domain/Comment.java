@@ -20,15 +20,18 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class Comment {
     @Id
+    @Column(nullable = false,name = "comment_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer commentId;
+    private Integer id;
     @ManyToOne //comment(M) User(O)
     @JoinColumn(name = "user_id")
     private User user;
     @ManyToOne //comment(M) Post(O)
     @JoinColumn(name = "post_id")
     private Post post;
+    private String nickName;
     private String content;
+    private String imageUrl;
     private LocalDateTime createdTime;
     private LocalDateTime updateTime;
     public void updateContent(String content) {

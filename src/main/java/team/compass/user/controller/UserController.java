@@ -39,13 +39,13 @@ public class UserController {
     public ResponseEntity<?> signIn(
             @RequestBody UserRequest.SignIn parameter
     ) {
-        TokenDto tokenDto = userService.signIn(parameter);
+        UserResponse userResponse = userService.signIn(parameter);
 
-        if(ObjectUtils.isEmpty(tokenDto)) {
+        if(ObjectUtils.isEmpty(userResponse)) {
             return ResponseUtils.badRequest("로그인에 실패하였습니다.");
         }
 
-        return ResponseUtils.ok("로그인 성공하였습니다.", tokenDto);
+        return ResponseEntity.ok().body(userResponse);
     }
 
     @PutMapping("/update")
@@ -59,7 +59,7 @@ public class UserController {
             return ResponseUtils.badRequest("해당 유저가 없습니다.");
         }
 
-        UserResponse userResponse = UserResponse.to(user);
+        UserResponse userResponse = UserResponse.to(user, "");
 
         return ResponseUtils.ok("회원정보 수정완료하였습니다.", userResponse);
     }

@@ -72,7 +72,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public TokenDto signIn(UserRequest.SignIn parameter) {
+    public UserResponse signIn(UserRequest.SignIn parameter) {
         User user = memberRepository.findByEmail(parameter.getEmail())
                 .orElseThrow(() -> new RuntimeException("해당 회원이 존재하지 않습니다."));
 
@@ -91,7 +91,9 @@ public class UserServiceImpl implements UserService {
                         .build()
         );
 
-        return jwtTokenProvider.createTokenDto(accessToken, refreshToken);
+//        return jwtTokenProvider.createTokenDto(accessToken, refreshToken);
+
+        return UserResponse.to(user, accessToken);
     }
 
     @Override

@@ -1,7 +1,9 @@
 package team.compass.post.service;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import team.compass.post.controller.response.PostResponse;
 import team.compass.post.domain.Post;
 import team.compass.post.dto.PostDto;
 import team.compass.user.domain.User;
@@ -12,16 +14,25 @@ import java.util.List;
 @Service
 public interface PostService {
 
-    // 메인 페이지 select
+
     Post write(Post param, List<MultipartFile> multipartFile, User user);
 
     Post update(Post param, List<MultipartFile> multipartFile, User user, Integer postId);
 
 
 //    void delete(Integer postId);
-    boolean delete(Integer postId);
 
-    Post getPost(Integer postId);
+    //    @Override
+//    @Transactional
+//    public void delete(Integer postId) {
+//        postRepository.deleteById(postId); // 삭제
+//    }
+
+    @Transactional
+    boolean delete(Integer postId, User user);
+
+    PostResponse getPost(Integer postId);
+
 
     Post getUserByLikePost(HttpServletRequest request);
 

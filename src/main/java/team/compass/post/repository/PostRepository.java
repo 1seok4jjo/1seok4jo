@@ -21,11 +21,8 @@ public interface PostRepository extends JpaRepository<Post,Integer> {
     //TODO: 해당 테마 글 조회 (해당 테마를 누르면 그에 해당되는 글 list 조회) o
     //TODO: 글검색 - DB LIKE 로 해결할지
 
-    @Query("select p from Post p left join fetch p.photos where p.id = :id")
-    Optional<Post> findById(@Param(value = "id") Integer id); // 단건 조회 (사진)
 
-    @Query("select p from Post p left join fetch  p.likes left join fetch p.user where p.id = :id")
-    Optional<Post> findWithLikeById(@Param(value = "id") Integer id); // 단건 조회 (좋아요 수 같이)
+
 
 //    @Query("select p from Post p left join fetch p.likes group by p.id")
 //    List<Post> findList(Pageable pageable); // 전체 조회 -> main page -> 쿼리 문제로 인해 좋아요수가 3인 글이 1개로 찍히는 문제

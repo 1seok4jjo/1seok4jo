@@ -8,9 +8,14 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CommentDto {
-    private Long commentId;
-    private String nickname;
+    private Integer commentId;
+    private Integer userId;
+    private String nickName;
     private String content;
+    private String imageUrl;
+    private LocalDateTime updatedAt;
     private LocalDateTime createdAt;
+
+
 
 }

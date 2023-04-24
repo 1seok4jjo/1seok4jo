@@ -29,8 +29,44 @@ public class PostResponse {
 
     private List<String> storeFileUrl;
     private Integer likeCount;
+
+    private Integer themeId;
+
+    private Long commentCount;
     private String nickname;
 
+
+    public PostResponse(Post post, Long commentCount, Integer themeId) {
+        this.id = post.getId();
+        this.title = post.getTitle();
+        this.detail = post.getDetail();
+        this.location = post.getLocation();
+        this.createdAt = post.getCreatedAt();
+        this.hashtag = post.getHashtag();
+        this.startDate = post.getStartDate();
+        this.endDate = post.getEndDate();
+        this.storeFileUrl = post.getPhotos().stream().map(i->i.getPhoto().getStoreFileUrl()).collect(Collectors.toList());
+        this.likeCount = post.getLikes().size();
+        this.commentCount=commentCount;
+        this.themeId = themeId;
+        this.nickname=post.getUser().getNickName();
+    }
+
+
+    public PostResponse(Post post, Long commentCount) {
+        this.id = post.getId();
+        this.title = post.getTitle();
+        this.detail = post.getDetail();
+        this.location = post.getLocation();
+        this.createdAt = post.getCreatedAt();
+        this.hashtag = post.getHashtag();
+        this.startDate = post.getStartDate();
+        this.endDate = post.getEndDate();
+        this.storeFileUrl = post.getPhotos().stream().map(i->i.getPhoto().getStoreFileUrl()).collect(Collectors.toList());
+        this.likeCount = post.getLikes().size();
+        this.commentCount=commentCount;
+        this.nickname=post.getUser().getNickName();
+    }
     public PostResponse(Post post) {
         this.id = post.getId();
         this.title = post.getTitle();
@@ -44,5 +80,6 @@ public class PostResponse {
         this.likeCount = post.getLikes().size();
         this.nickname=post.getUser().getNickName();
     }
+
 
 }
