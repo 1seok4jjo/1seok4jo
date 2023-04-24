@@ -98,6 +98,25 @@ public class UserController {
         }
     }
 
+    @PostMapping("/password/send")
+    public ResponseEntity<?> resetPasswordSendMsg(
+            HttpServletRequest request
+    ) {
+        userService.resetPasswordSendMsg(request);
+
+        return ResponseUtils.ok("회원 비밀번호 초기화 메일 전송에 성공하였습니다.", true);
+    }
+
+    @PostMapping("/password/reset")
+    public ResponseEntity<?> resetPassword(
+            HttpServletRequest request,
+            @RequestBody PasswordResetRequest parameter
+    ) {
+        userService.resetPassword(request, parameter);
+
+        return ResponseUtils.ok("회원 비밀번호 초기화에 성공하였습니다.", true);
+    }
+
 
     @GetMapping("/post/{type}")
     public ResponseEntity<?> getByUserPostList(
@@ -112,8 +131,6 @@ public class UserController {
 
         return ResponseUtils.ok("회원 좋아요 글 목록 조회에 성공했습니다.", response);
     }
-
-
 
 
     // 해당 유저 작성 글 조회

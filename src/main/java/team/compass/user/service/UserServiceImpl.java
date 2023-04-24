@@ -14,6 +14,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import team.compass.common.config.JwtTokenProvider;
+import team.compass.common.utils.MailUtils;
 import team.compass.photo.domain.Photo;
 import team.compass.photo.repository.PhotoRepository;
 import team.compass.photo.service.FileUploadService;
@@ -29,6 +30,7 @@ import team.compass.user.repository.UserRepository;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -43,6 +45,8 @@ public class UserServiceImpl implements UserService {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
+
+    private final MailUtils mailUtils;
 
     @Override
     @Transactional
@@ -155,6 +159,39 @@ public class UserServiceImpl implements UserService {
         Long expiration = jwtTokenProvider.getExpiration(accessToken);
 
         refreshTokenRepository.setBlackList(accessToken, expiration);
+    }
+
+    @Override
+    public void resetPassword(HttpServletRequest request, PasswordResetRequest parameter) {
+        String accessToken = jwtTokenProvider.resolveToken(request);
+        String email = jwtTokenProvider.getMemberEmailByToken(accessToken);
+
+        User user = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("해당 회원이 없습니다."));
+
+        if(!parameter.getUuid().equals(user.getResetPasswordKey()) ) {
+            throw new RuntimeException("비밀번호 초기화 코드 오류입니다.");
+        }
+
+        String password = passwordEncoder.encode(parameter.getPassword());
+        user.setPassword(password);
+
+        memberRepository.save(user);
+    }
+
+    @Override
+    public void resetPasswordSendMsg(HttpServletRequest request) {
+        String accessToken = jwtTokenProvider.resolveToken(request);
+        String email = jwtTokenProvider.getMemberEmailByToken(accessToken);
+        String uuid = UUID.randomUUID().toString();
+
+        User user = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("해당 회원이 없습니다."));
+
+        user.setResetPasswordKey(uuid);
+
+        memberRepository.save(user);
+        mailUtils.sendMessage(user);
     }
 
     @Override
