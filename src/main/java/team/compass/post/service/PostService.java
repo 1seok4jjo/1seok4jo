@@ -8,6 +8,7 @@ import team.compass.post.domain.Post;
 import team.compass.post.dto.PostDto;
 import team.compass.user.domain.User;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @Service
@@ -32,6 +33,8 @@ public interface PostService {
 
     PostResponse getPost(Integer postId);
 
+
+    Post getUserByLikePost(HttpServletRequest request);
 
     List<PostDto> themePageSelect(Integer themeId, Integer lastId);
 }

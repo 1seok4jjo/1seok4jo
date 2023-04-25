@@ -65,7 +65,9 @@ public class Post {
     @OneToMany(mappedBy = "post",fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<Comment> contents; // 댓글
 
-    @OneToMany(mappedBy = "post",fetch = FetchType.LAZY, cascade = CascadeType.REMOVE) // N + 1 문제.. 쿼리를 1번만 호출해도 되는데 (글 3개) 3번 호출하게 돼서 손해. 그래서 지연 로딩 걸어놨음
+//    mappedBy = "post",
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @JoinColumn(name = "user_id")// N + 1 문제.. 쿼리를 1번만 호출해도 되는데 (글 3개) 3번 호출하게 돼서 손해. 그래서 지연 로딩 걸어놨음
     private List<Likes> likes; // 좋아요
 
     @OneToMany(mappedBy = "post",fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
