@@ -8,17 +8,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.MultiValueMap;
 import org.springframework.util.ObjectUtils;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import team.compass.common.config.JwtTokenProvider;
 import team.compass.common.utils.MailUtils;
-import team.compass.photo.domain.Photo;
-import team.compass.photo.repository.PhotoRepository;
 import team.compass.photo.service.FileUploadService;
-import team.compass.post.controller.response.PostResponse;
 import team.compass.post.domain.Post;
 import team.compass.post.dto.PhotoDto;
 import team.compass.post.repository.PostRepository;
@@ -31,14 +26,12 @@ import team.compass.user.repository.UserRepository;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository memberRepository;
-    private final PhotoRepository photoRepository;
     private final FileUploadService fileUploadService;
     private final PostRepository postRepository;
 
@@ -77,13 +70,10 @@ public class UserServiceImpl implements UserService {
 
 
 
-
         User user = memberRepository.save(UserRequest.SignUp.toEntity(parameter));
 
         return user;
     }
-
-
 
 
     @Override
@@ -107,7 +97,6 @@ public class UserServiceImpl implements UserService {
                         .build()
         );
 
-//        return jwtTokenProvider.createTokenDto(accessToken, refreshToken);
 
         return UserResponse.to(user, accessToken);
     }
@@ -116,15 +105,7 @@ public class UserServiceImpl implements UserService {
     @Transactional(rollbackFor = RuntimeException.class)
     public User updateUser(UserUpdate parameter, HttpServletRequest request) {
         String accessToken = jwtTokenProvider.resolveToken(request);
-
-        if(!StringUtils.hasText(accessToken)) {
-            throw new RuntimeException("토큰 정보가 없습니다.");
-        }
-
-        Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
-
-        User user = memberRepository.findByEmail(authentication.getName())
-                .orElseThrow(() -> new RuntimeException("로그인 유저 정보가 없습니다."));
+        User user = findUserByAccessToken(accessToken);
 
         if(!passwordEncoder.matches(parameter.getPassword(), user.getPassword())) {
             throw new RuntimeException("현재 비밀번호가 틀립니다.");
@@ -149,25 +130,15 @@ public class UserServiceImpl implements UserService {
     ) {
         String accessToken = jwtTokenProvider.resolveToken(request);
 
-        Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
+        User user = findUserByAccessToken(accessToken);
 
-        RefreshToken token = refreshTokenRepository.findByEmail(authentication.getName())
-                .orElseThrow(() -> new RuntimeException("해당 유저 토큰 정보가 없습니다."));
-
-        refreshTokenRepository.delete(token);
-
-        Long expiration = jwtTokenProvider.getExpiration(accessToken);
-
-        refreshTokenRepository.setBlackList(accessToken, expiration);
+        updateUserByTokenBlackList(accessToken);
     }
 
     @Override
     public void resetPassword(HttpServletRequest request, PasswordResetRequest parameter) {
         String accessToken = jwtTokenProvider.resolveToken(request);
-        String email = jwtTokenProvider.getMemberEmailByToken(accessToken);
-
-        User user = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("해당 회원이 없습니다."));
+        User user = findUserByAccessToken(accessToken);
 
         if(!parameter.getUuid().equals(user.getResetPasswordKey()) ) {
             throw new RuntimeException("비밀번호 초기화 코드 오류입니다.");
@@ -182,12 +153,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public void resetPasswordSendMsg(HttpServletRequest request) {
         String accessToken = jwtTokenProvider.resolveToken(request);
-        String email = jwtTokenProvider.getMemberEmailByToken(accessToken);
         String uuid = UUID.randomUUID().toString();
 
-        User user = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("해당 회원이 없습니다."));
-
+        User user = findUserByAccessToken(accessToken);
         user.setResetPasswordKey(uuid);
 
         memberRepository.save(user);
@@ -198,23 +166,14 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void withdraw(HttpServletRequest request) {
         String accessToken = jwtTokenProvider.resolveToken(request);
-        Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
 
+        User user = findUserByAccessToken(accessToken);
 
-        RefreshToken refreshToken = refreshTokenRepository.findByEmail(authentication.getName())
-                .orElseThrow(() -> new RuntimeException("해당 유저 토큰 정보가 없습니다."));
-
-        refreshTokenRepository.delete(refreshToken);
-
-        Long expiration = jwtTokenProvider.getExpiration(accessToken);
-
-        refreshTokenRepository.setBlackList(accessToken, expiration);
-
-        User user = memberRepository.findByEmail(authentication.getName())
-                .orElseThrow(() -> new RuntimeException("해당 유저 정보가 없습니다."));
+        updateUserByTokenBlackList(accessToken);
 
         memberRepository.delete(user);
     }
+
 
 
     @Override
@@ -222,14 +181,7 @@ public class UserServiceImpl implements UserService {
     public UserResponse updatePassword(PasswordInitRequest parameter, HttpServletRequest request) {
         String accessToken = jwtTokenProvider.resolveToken(request);
 
-        if(!StringUtils.hasText(accessToken)) {
-            throw new RuntimeException("토큰 정보가 없습니다.");
-        }
-
-        String email = jwtTokenProvider.getMemberEmailByToken(accessToken);
-
-        User user = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("로그인 유저 정보가 없습니다."));
+        User user = findUserByAccessToken(accessToken);
 
         if(!passwordEncoder.matches(parameter.getPassword(), user.getPassword())) {
             throw new RuntimeException("현재 비밀번호가 틀립니다.");
@@ -238,10 +190,9 @@ public class UserServiceImpl implements UserService {
         String encodedPassword = passwordEncoder.encode(parameter.getNewPassword());
 
         user.setPassword(encodedPassword);
+        memberRepository.save(user);
 
-        User updateUser =  memberRepository.save(user);
-
-        return UserResponse.to(updateUser, accessToken);
+        return UserResponse.to(user, accessToken);
     }
 
 
@@ -289,6 +240,26 @@ public class UserServiceImpl implements UserService {
         );
 
         return tokenDto;
+    }
+
+    private User findUserByAccessToken(String accessToken) {
+        String email = jwtTokenProvider.getMemberEmailByToken(accessToken);
+        User user = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("해당 유저 정보가 없습니다."));
+
+        return user;
+    }
+
+    private void updateUserByTokenBlackList(String accessToken) {
+        String email = jwtTokenProvider.getMemberEmailByToken(accessToken);
+
+        RefreshToken refreshToken = refreshTokenRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("해당 유저 토큰 정보가 없습니다."));
+
+        Long expiration = jwtTokenProvider.getExpiration(accessToken);
+
+        refreshTokenRepository.setBlackList(accessToken, expiration);
+        refreshTokenRepository.delete(refreshToken);
     }
 
 
@@ -347,9 +318,6 @@ public class UserServiceImpl implements UserService {
      */
     private String savePhotos(MultipartFile img) {
         PhotoDto photoDto = fileUploadService.save(img);
-
         return photoDto.getStoreFileUrl();
     }
-
-
 }
