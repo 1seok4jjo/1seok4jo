@@ -127,7 +127,8 @@ public class PostController {
         String accessToken = jwtTokenProvider.resolveToken(request);
         Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
         String userEmail =  authentication.getName();
-        User user = userRepository.findByEmail(userEmail).orElseThrow(() -> new IllegalArgumentException("유저 없음"));
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new IllegalArgumentException("유저 없음"));
         return user;
     }
 

@@ -10,8 +10,11 @@ import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import team.compass.post.domain.Post;
+
 import team.compass.like.domain.Likes;
-import team.compass.user.dto.UserRequest;
+
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -36,7 +39,7 @@ import java.util.stream.Collectors;
 //)
 public class User extends BaseEntity implements UserDetails {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false,name = "user_id")
     private Integer id;
 
@@ -68,8 +71,8 @@ public class User extends BaseEntity implements UserDetails {
 
 
     // post entity
-    // @OneToMany(mappedBy = "member", fetch = FetchType.EAGER)
-    // private List<Post> posts;
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<Post> posts;
 
 
     @Override
