@@ -90,7 +90,7 @@ public class PostController {
         Post updatePost = postService.update(getPostEntity(postRequest), images, user, postId); // 업데이트 받아온 것 저장
 
         if (updatePost != null) {
-            return ResponseUtils.ok("글을 수정하였습니다.", new PostResponse(updatePost));
+            return ResponseUtils.ok("글을 수정하였습니다.", "ok");//new PostResponse(updatePost)
         } else {
             return ResponseUtils.badRequest("글 수정에 실패하였습니다.");
         }

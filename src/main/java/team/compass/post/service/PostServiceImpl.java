@@ -31,6 +31,7 @@ import team.compass.user.repository.UserRepository;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -87,22 +88,29 @@ public class PostServiceImpl implements PostService {
     @Transactional
     public Post update(Post updatePost, List<MultipartFile> multipartFile, User user, Integer postId) {
         // post 업데이트
-        Post post = postRepository.findById(postId)
+        Post udPost = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 없습니다."));
 
-        if (!post.getUser().getId().equals(user.getId())) {
+        if (!udPost.getUser().getId().equals(user.getId())) {
             throw new IllegalArgumentException(" 권한없음 ");
         }
 
-        Post udPost = Post.builder()
-                .title(post.getTitle())
-                .location(post.getLocation())
-                .detail(post.getDetail())
-                .startDate(post.getStartDate())
-                .endDate(post.getEndDate())
-                .hashtag(post.getHashtag())
-                .user(post.getUser())
-                .build();
+//        Post udPost = Post.builder()
+//                .title(post.getTitle())
+//                .location(post.getLocation())
+//                .detail(post.getDetail())
+//                .startDate(post.getStartDate())
+//                .endDate(post.getEndDate())
+//                .hashtag(post.getHashtag())
+//                .user(post.getUser())
+//                .build();
+        udPost.setTitle(updatePost.getTitle()); // 제목
+        udPost.setLocation(updatePost.getLocation()); // 장소
+        udPost.setDetail(updatePost.getDetail()); // 내용
+        udPost.setStartDate(updatePost.getStartDate()); // 여행 시작
+        udPost.setEndDate(updatePost.getEndDate()); // 여행 끝
+        udPost.setHashtag(updatePost.getHashtag()); // 해시태그
+        udPost.setUser(user);
 
         postRepository.save(udPost); // 업데이트로 쓰인 데이터들 repo 저장
         //사진 저장
