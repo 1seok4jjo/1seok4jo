@@ -1,19 +1,18 @@
 package team.compass.user.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.apache.tomcat.util.http.ResponseUtil;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import team.compass.common.utils.ResponseUtils;
 import team.compass.user.domain.User;
-import team.compass.user.dto.TokenDto;
-import team.compass.user.dto.UserRequest;
-import team.compass.user.dto.UserResponse;
-import team.compass.user.dto.UserUpdate;
+import team.compass.user.dto.*;
 import team.compass.user.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/member")
@@ -23,9 +22,11 @@ public class UserController {
 
     @PostMapping("/signup")
     public ResponseEntity<?> signup(
-            @RequestBody UserRequest.SignUp parameter
-    ) {
-        User user = userService.signUp(parameter);
+            @RequestPart(value = "data") UserRequest.SignUp parameter,
+            MultipartHttpServletRequest request
+            ) {
+        Map<String, MultipartFile> multipartFileMap = request.getFileMap();
+        User user = userService.signUp(parameter, multipartFileMap);
 
         if(ObjectUtils.isEmpty(user)) {
             return ResponseUtils.badRequest("회원가입에 실패하였습니다.");
@@ -38,13 +39,13 @@ public class UserController {
     public ResponseEntity<?> signIn(
             @RequestBody UserRequest.SignIn parameter
     ) {
-        TokenDto tokenDto = userService.signIn(parameter);
+        UserResponse userResponse = userService.signIn(parameter);
 
-        if(ObjectUtils.isEmpty(tokenDto)) {
+        if(ObjectUtils.isEmpty(userResponse)) {
             return ResponseUtils.badRequest("로그인에 실패하였습니다.");
         }
 
-        return ResponseUtils.ok("로그인 성공하였습니다.", tokenDto);
+        return ResponseEntity.ok().body(userResponse);
     }
 
     @PutMapping("/update")
@@ -52,13 +53,13 @@ public class UserController {
             @RequestBody UserUpdate parameter,
             HttpServletRequest request
     ) {
-        User user = userService.updateUserInfo(parameter, request);
+        User user = userService.updateUser(parameter, request);
 
         if(ObjectUtils.isEmpty(user)) {
             return ResponseUtils.badRequest("해당 유저가 없습니다.");
         }
 
-        UserResponse userResponse = UserResponse.to(user);
+        UserResponse userResponse = UserResponse.to(user, "");
 
         return ResponseUtils.ok("회원정보 수정완료하였습니다.", userResponse);
     }
@@ -70,5 +71,49 @@ public class UserController {
     ) {
         userService.logout(request);
         return ResponseUtils.ok("로그아웃 완료하였습니다.", true);
+    }
+
+    @DeleteMapping("/withdraw")
+    public ResponseEntity<?> withdraw(
+            HttpServletRequest request
+    ){
+        userService.withdraw(request);
+        return ResponseUtils.ok("회원탈퇴를 완료하였습니다.", true);
+    }
+
+
+    @GetMapping("/post/{type}")
+    public ResponseEntity<?> getByUserPostList(
+            @PathVariable String type,
+            HttpServletRequest request
+    ) {
+        UserPostResponse response = null;
+
+        if(type.equals("like")){
+            response = userService.getUserByLikePost(request);
+        }
+
+        return ResponseUtils.ok("회원 좋아요 글 목록 조회에 성공했습니다.", response);
+    }
+
+
+
+
+    // 해당 유저 작성 글 조회
+    @GetMapping("/post")
+    public ResponseEntity<?> getUserByPost(HttpServletRequest request) {
+        UserPostResponse postResponse = userService.getUserByPost(request);
+
+        if(ObjectUtils.isEmpty(postResponse)) {
+            return ResponseUtils.badRequest("작성 게시글 조회에 실패했습니다.");
+        }
+        return ResponseUtils.ok("해당 유저가 작성한 게시글 조회에 성공했습니다.", postResponse);
+    }
+
+    @GetMapping("/like-post")
+    public ResponseEntity<?> getUserLikeByPost(HttpServletRequest request) {
+        UserPostResponse postResponse = userService.getUserByLikePost(request);
+
+        return ResponseUtils.ok("해당 유저가 좋아요한 게시글 조회에 성공했습니다.", postResponse);
     }
 }

@@ -27,6 +27,9 @@ public class UserRequest {
         @NotEmpty(message = "닉네임 입력은 필수입니다.")
         private String nickname;
 
+        private String profileImageUrl;
+        private String userBannerImgUrl;
+
         private String loginType;
 
         public static User toEntity(SignUp parameter) {
@@ -35,6 +38,8 @@ public class UserRequest {
                     .password(parameter.getPassword())
                     .nickName(parameter.getNickname())
                     .loginType(parameter.getLoginType())
+                    .profileImageUrl(parameter.getProfileImageUrl())
+                    .userBannerImgUrl(parameter.getUserBannerImgUrl())
                     .build();
         }
     }

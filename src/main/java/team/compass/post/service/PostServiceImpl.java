@@ -2,9 +2,14 @@ package team.compass.post.service;
 
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import team.compass.common.config.JwtTokenProvider;
 import team.compass.comment.repository.CommentRepository;
 import team.compass.photo.domain.Photo;
 import team.compass.photo.repository.PhotoRepository;
@@ -19,8 +24,11 @@ import team.compass.post.repository.PostCustomRepository;
 import team.compass.post.repository.PostRepository;
 import team.compass.theme.domain.Theme;
 import team.compass.theme.repository.ThemeRepository;
+import team.compass.user.domain.RefreshToken;
 import team.compass.user.domain.User;
+import team.compass.user.repository.UserRepository;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -45,6 +53,12 @@ public class PostServiceImpl implements PostService {
     private final PostCustomRepository postCustomRepository;
 
     private final CommentRepository commentRepository;
+
+
+
+
+    private final JwtTokenProvider jwtTokenProvider;
+    private final UserRepository userRepository;
 
 
     /**
@@ -189,5 +203,23 @@ public class PostServiceImpl implements PostService {
 //        }
 //        List<PostDto> postResult = result; // 그 담아진 결과 5개를 다시 담아서 리턴
 //        return postResult;
+    }
+
+
+    @Override
+    public Post getUserByLikePost(HttpServletRequest request) {
+        Pageable pageable = PageRequest.of(0, 10);
+
+        String accessToken = jwtTokenProvider.resolveToken(request);
+
+        Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
+
+        User user = userRepository.findByEmail(authentication.getName())
+                .orElseThrow(() -> new RuntimeException("해당 유저가 없습니다."));
+
+        Page post = postRepository.findAllByLikes_User_Id(user.getId(), pageable)
+                .orElseThrow(() -> new RuntimeException("해당 글이 없습니다."));
+
+        return null;
     }
 }

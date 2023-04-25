@@ -5,11 +5,16 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.envers.AuditOverride;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
 import team.compass.post.domain.Post;
-import team.compass.user.dto.UserRequest;
+
+import team.compass.like.domain.Likes;
+
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -18,12 +23,21 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
+
 @Entity
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class User implements UserDetails {
+@AuditOverride(forClass = BaseEntity.class)
+//@NamedEntityGraph(
+//        name = "User.withAll",
+//        attributeNodes = {
+//                @NamedAttributeNode(value = "likes", subgraph = "likes")
+//        },
+//        subgraphs = @NamedSubgraph(name = "likes", attributeNodes = {@NamedAttributeNode("user")})
+//)
+public class User extends BaseEntity implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false,name = "user_id")
@@ -49,6 +63,10 @@ public class User implements UserDetails {
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> roles = new ArrayList<>();
 
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private List<Likes> likes;
 
 
 
