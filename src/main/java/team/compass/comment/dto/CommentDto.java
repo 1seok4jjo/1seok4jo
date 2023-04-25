@@ -13,8 +13,7 @@ public class CommentDto {
     private String nickName;
     private String content;
     private String imageUrl;
-    private LocalDateTime updatedAt;
-    private LocalDateTime createdAt;
+    private LocalDateTime createdTime;
 
 
 

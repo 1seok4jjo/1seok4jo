@@ -2,6 +2,7 @@ package team.compass.comment.dto;
 
 
 
+import java.time.LocalDateTime;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -30,5 +31,6 @@ public class CommentRequest {
             .content(this.content)
             .build();
     }
+
 
 }

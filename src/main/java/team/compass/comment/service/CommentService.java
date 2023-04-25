@@ -28,21 +28,21 @@ public class CommentService {
     @Transactional
     public CommentResponse registerComment(CommentRequest request) {
         Post post = postRepository.findById(request.getPostId())
-                .orElseThrow(() -> new RuntimeException("해당 게시글을 찾을 수 없습니다"));
 
+            .orElseThrow(() -> new IllegalArgumentException("해당 게시글을 찾을 수 없습니다"));
 
         User writer = userRepository.findById(request.getUserId())
-                .orElseThrow(() -> new RuntimeException("해당 회원을 찾을 수 없습니다"));
+            .orElseThrow(() -> new IllegalArgumentException("회원을 찾을 수 없습니다"));
+
 
         Comment newComment = commentRepository.save(request.requestComment(post, writer));
+
         return CommentResponse.responseComment(newComment, writer);
     }
     //댓글조회
-    public List<CommentResponse> getCommentListByPostId(CommentRequest request){
-        Post post = postRepository.findById(request.getPostId())
-            .orElseThrow(() -> new RuntimeException("해당 게시글을 찾을 수 없습니다"));
+    public List<CommentResponse> getCommentListByPostId(Integer postId){
 
-        List<Comment> commentList = commentRepository.findAllByPostIdAndPost(request.getPostId(),post);
+        List<Comment> commentList = commentRepository.findAllByPostId(postId);
 
        return commentList.stream()
            .map(CommentResponse::fromEntity)
@@ -52,10 +52,13 @@ public class CommentService {
     //댓글수정
     public CommentResponse updateComment(Integer commentId, CommentRequest request) {
         Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new RuntimeException("해당 댓글을 찾을 수 없습니다."));
+
+            .orElseThrow(() -> new IllegalArgumentException("해당 댓글을 찾을 수 없습니다."));
+=======
+          
 
         if (!comment.getUser().getId().equals(request.getUserId())) {
-            throw new RuntimeException("댓글은 댓글을 쓴 사람만 수정 할 수 있습니다.");
+            throw new IllegalArgumentException("댓글은 댓글을 쓴 사람만 수정 할 수 있습니다.");
         }
         comment.updateContent(request.getContent());
         commentRepository.save(comment);
@@ -63,9 +66,18 @@ public class CommentService {
         return CommentResponse.fromEntity(comment);
     }
 
-    //댓글 삭제
-    public void deleteComment(Integer commentId) {
 
-        commentRepository.findById(commentId).ifPresent(commentRepository::delete);
+//댓글 삭제
+    public boolean deleteComment(Integer commentId ,CommentRequest request) {
+        Comment comment = commentRepository.findById(commentId)
+            .orElseThrow(() -> new IllegalArgumentException("해당 댓글을 찾을 수 없습니다."));
+
+
+
+        if (comment.getUser().getId().equals(request.getUserId())) {
+            throw new IllegalArgumentException("댓글은 댓글을 쓴 사람만 삭제 할 수 있습니다.");
+        }
+        commentRepository.deleteById(commentId);
+        return true;
     }
 }
