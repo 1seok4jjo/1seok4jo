@@ -24,11 +24,14 @@ public class CommentRequest {
     @NotBlank
     private String content;
 
+    private LocalDateTime createdTime;
+
     public Comment requestComment(Post posting, User user){
         return Comment.builder()
             .post(posting)
             .user(user)
             .content(this.content)
+            .createdTime(LocalDateTime.now())
             .build();
     }
 
