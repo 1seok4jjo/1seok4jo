@@ -10,9 +10,10 @@ import team.compass.comment.domain.Comment;
 import team.compass.comment.dto.CommentRequest;
 import team.compass.comment.dto.CommentResponse;
 import team.compass.comment.repository.CommentRepository;
-import team.compass.post.domain.Post;
 import team.compass.post.repository.PostRepository;
 import team.compass.user.domain.User;
+import team.compass.post.domain.Post;
+
 import team.compass.user.repository.UserRepository;
 
 @Service

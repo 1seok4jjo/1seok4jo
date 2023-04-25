@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import team.compass.post.controller.response.PostResponse;
+import team.compass.post.domain.Post;
 
 import java.util.List;
 
