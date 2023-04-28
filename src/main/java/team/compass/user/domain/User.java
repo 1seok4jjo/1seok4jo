@@ -3,14 +3,19 @@ package team.compass.user.domain;
 
 import lombok.*;
 import org.hibernate.envers.AuditOverride;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import team.compass.post.domain.Post;
+
 import team.compass.like.domain.Likes;
 import team.compass.post.domain.Post;
 import team.compass.user.dto.UserRequest;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;

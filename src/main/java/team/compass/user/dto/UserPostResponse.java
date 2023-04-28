@@ -29,6 +29,8 @@ public class UserPostResponse {
                                 .hashtag(item.getHashtag())
                                 .location(item.getLocation())
                                 .createdAt(item.getCreatedAt())
+                                    .commentCount((long) item.getContents().size())
+                                    .likeCount(item.getLikes().size())
                                 .build()
                         ).collect(Collectors.toList())
                 )

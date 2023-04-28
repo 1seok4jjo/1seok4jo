@@ -9,11 +9,15 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import team.compass.common.config.JwtTokenProvider;
 import team.compass.common.utils.MailUtils;
+import team.compass.photo.domain.Photo;
+import team.compass.photo.repository.PhotoRepository;
 import team.compass.photo.service.FileUploadService;
+import team.compass.post.controller.response.PostResponse;
 import team.compass.post.domain.Post;
 import team.compass.post.dto.PhotoDto;
 import team.compass.post.repository.PostRepository;
@@ -24,6 +28,7 @@ import team.compass.user.repository.RefreshTokenRepository;
 import team.compass.user.repository.UserRepository;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -33,6 +38,7 @@ import java.util.UUID;
 public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository memberRepository;
+    private final PhotoRepository photoRepository;
     private final FileUploadService fileUploadService;
     private final PostRepository postRepository;
 
@@ -112,10 +118,18 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException("현재 비밀번호가 틀립니다.");
         }
 
+        Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
+
+//        User user = memberRepository.findByEmail(authentication.getName())
+//                .orElseThrow(() -> new RuntimeException("로그인 유저 정보가 없습니다."));
+        User user1 = memberRepository.findByEmail(authentication.getName())
+                .orElseThrow(() -> new RuntimeException("로그인 유저 정보가 없습니다."));
+
         String encodedPassword = passwordEncoder.encode(parameter.getPassword());
+
         User updateUser = User.builder()
-                            .id(user.getId())
-                            .email(user.getEmail())
+                            .id(user1.getId())
+                            .email(user1.getEmail())
                             .password(encodedPassword)
                             .build();
 
@@ -290,13 +304,30 @@ public class UserServiceImpl implements UserService {
         User user = memberRepository.findByEmail(authentication.getName())
                 .orElseThrow(() -> new RuntimeException("해당 유저가 없습니다."));
 
-        Page<Post> postPage = postRepository.findAllByUser_Id(user.getId(), pageable)
+        Page<Post> postPage = postRepository.findAllByUserId(user.getId(), pageable)
                 .orElse(null);
 
         return postPage;
     }
 
-//    private Page<Post> getLikePostList(HttpServletRequest request) {
+    private Page<Post> getLikePostList(HttpServletRequest request) {
+        Pageable pageable = PageRequest.of(0, 10);
+
+        String accessToken = jwtTokenProvider.resolveToken(request);
+        Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
+
+        User user = memberRepository.findByEmail(authentication.getName())
+                .orElseThrow(() -> new RuntimeException("해당 유저가 없습니다."));
+
+
+        Page<Post> postPage = postRepository
+                .findAllByUserIdAndLikes(user.getId(), pageable)
+                .orElse(null);
+
+        return postPage;
+    }
+
+    //    private Page<Post> getLikePostList(HttpServletRequest request) {
 //        Pageable pageable = PageRequest.of(0, 10);
 //
 //        String accessToken = jwtTokenProvider.resolveToken(request);
@@ -310,6 +341,7 @@ public class UserServiceImpl implements UserService {
 //
 //        return postPage;
 //    }
+
 
 
     /**
