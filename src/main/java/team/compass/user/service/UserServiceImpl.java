@@ -25,6 +25,7 @@ import team.compass.user.repository.UserRepository;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -136,9 +137,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void resetPassword(HttpServletRequest request, PasswordResetRequest parameter) {
-        String accessToken = jwtTokenProvider.resolveToken(request);
-        User user = findUserByAccessToken(accessToken);
+    public void resetPassword(PasswordResetRequest parameter) {
+        User user = memberRepository.findByEmail(parameter.getEmail())
+                .orElseThrow(() -> new RuntimeException("해당 유저가 없습니다."));
 
         if(!parameter.getUuid().equals(user.getResetPasswordKey()) ) {
             throw new RuntimeException("비밀번호 초기화 코드 오류입니다.");
@@ -151,11 +152,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void resetPasswordSendMsg(HttpServletRequest request) {
-        String accessToken = jwtTokenProvider.resolveToken(request);
-        String uuid = UUID.randomUUID().toString();
+    public void resetPasswordSendMsg(UserPasswordResetMailRequest parameter) {
+        User user = memberRepository.findByEmail(parameter.getEmail())
+                .orElseThrow(() -> new RuntimeException("해당 유저가 없습니다."));
 
-        User user = findUserByAccessToken(accessToken);
+        String uuid = UUID.randomUUID().toString();
         user.setResetPasswordKey(uuid);
 
         memberRepository.save(user);

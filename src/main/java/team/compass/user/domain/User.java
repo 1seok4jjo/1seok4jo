@@ -56,7 +56,7 @@ public class User extends BaseEntity implements UserDetails {
 
     // 권한 추가?????
     @ElementCollection(fetch = FetchType.EAGER)
-    private List<String> roles = new ArrayList<>();
+    private List<String> roles;
 
 
     @OneToMany(fetch = FetchType.LAZY)

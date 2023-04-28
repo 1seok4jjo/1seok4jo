@@ -12,6 +12,8 @@ import javax.validation.constraints.NotEmpty;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PasswordResetRequest {
+    @NotEmpty(message = "이메일 값은 필수입니다.")
+    String email;
     @NotEmpty(message = "패스워드 입력은 필수입니다.")
     String password;
     @NotEmpty(message = "초기화 코드 입력은 필수입니다.")

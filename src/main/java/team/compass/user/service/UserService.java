@@ -21,9 +21,9 @@ public interface UserService {
 
     UserResponse updatePassword(PasswordInitRequest parameter, HttpServletRequest request);
 
-    void resetPasswordSendMsg(HttpServletRequest request);
+    void resetPasswordSendMsg(UserPasswordResetMailRequest parameter);
 
-    void resetPassword(HttpServletRequest request, PasswordResetRequest parameter);
+    void resetPassword(PasswordResetRequest parameter);
 
 
     UserPostResponse getUserByPost(HttpServletRequest request);

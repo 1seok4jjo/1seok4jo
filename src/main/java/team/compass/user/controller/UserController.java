@@ -2,6 +2,7 @@ package team.compass.user.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -12,22 +13,23 @@ import team.compass.user.dto.*;
 import team.compass.user.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
+import java.nio.file.attribute.UserPrincipal;
+import java.security.Principal;
 import java.util.Map;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/member")
 @RestController
+@CrossOrigin(origins = "*")
 public class UserController {
     private final UserService userService;
 
     @PostMapping("/signup")
     public ResponseEntity<?> signup(
             @RequestPart(name = "data") UserRequest.SignUp parameter,
-            @RequestPart(name = "files", required = false) MultipartFile[] multiFiles,
             HttpServletRequest request
             ) {
         MultipartHttpServletRequest multipartHttpServletRequest = (MultipartHttpServletRequest) request;
-
 
         User user = userService.signUp(parameter, multipartHttpServletRequest);
 
@@ -56,6 +58,7 @@ public class UserController {
             @RequestBody UserUpdate parameter,
             HttpServletRequest request
     ) {
+
         User user = userService.updateUser(parameter, request);
 
         if(ObjectUtils.isEmpty(user)) {
@@ -100,19 +103,18 @@ public class UserController {
 
     @PostMapping("/password/send")
     public ResponseEntity<?> resetPasswordSendMsg(
-            HttpServletRequest request
+            @RequestBody UserPasswordResetMailRequest parameter
     ) {
-        userService.resetPasswordSendMsg(request);
+        userService.resetPasswordSendMsg(parameter);
 
         return ResponseUtils.ok("회원 비밀번호 초기화 메일 전송에 성공하였습니다.", true);
     }
 
     @PostMapping("/password/reset")
     public ResponseEntity<?> resetPassword(
-            HttpServletRequest request,
             @RequestBody PasswordResetRequest parameter
     ) {
-        userService.resetPassword(request, parameter);
+        userService.resetPassword(parameter);
 
         return ResponseUtils.ok("회원 비밀번호 초기화에 성공하였습니다.", true);
     }
