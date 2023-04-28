@@ -1,10 +1,7 @@
 package team.compass.user.domain;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.envers.AuditOverride;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.security.core.GrantedAuthority;
@@ -26,6 +23,7 @@ import java.util.stream.Collectors;
 
 @Entity
 @Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -61,7 +59,7 @@ public class User extends BaseEntity implements UserDetails {
 
     // 권한 추가?????
     @ElementCollection(fetch = FetchType.EAGER)
-    private List<String> roles = new ArrayList<>();
+    private List<String> roles;
 
 
     @OneToMany(fetch = FetchType.LAZY)
