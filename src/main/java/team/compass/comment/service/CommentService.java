@@ -54,8 +54,7 @@ public class CommentService {
         Comment comment = commentRepository.findById(commentId)
 
             .orElseThrow(() -> new IllegalArgumentException("해당 댓글을 찾을 수 없습니다."));
-=======
-          
+
 
         if (!comment.getUser().getId().equals(request.getUserId())) {
             throw new IllegalArgumentException("댓글은 댓글을 쓴 사람만 수정 할 수 있습니다.");
