@@ -66,6 +66,8 @@ public class PostResponse {
         this.endDate = post.getEndDate();
         this.storeFileUrl = post.getPhotos().stream().map(i->i.getPhoto().getStoreFileUrl()).collect(Collectors.toList());
         this.likeCount = post.getLikes().size();
+        this.commentCount = (long) post.getContents().size();
+        this.themeId = post.getTheme().getId();
         User user = post.getUser();
         this.nickname= user.getNickName();
         this.userProfileImage = user.getProfileImageUrl();

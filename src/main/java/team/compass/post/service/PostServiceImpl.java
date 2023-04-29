@@ -92,22 +92,13 @@ public class PostServiceImpl implements PostService {
         if (!udPost.getUser().getId().equals(user.getId())) {
             throw new IllegalArgumentException(" 권한없음 ");
         }
-
-//        Post udPost = Post.builder()
-//                .title(post.getTitle())
-//                .location(post.getLocation())
-//                .detail(post.getDetail())
-//                .startDate(post.getStartDate())
-//                .endDate(post.getEndDate())
-//                .hashtag(post.getHashtag())
-//                .user(post.getUser())
-//                .build();
         udPost.setTitle(updatePost.getTitle()); // 제목
         udPost.setLocation(updatePost.getLocation()); // 장소
         udPost.setDetail(updatePost.getDetail()); // 내용
         udPost.setStartDate(updatePost.getStartDate()); // 여행 시작
         udPost.setEndDate(updatePost.getEndDate()); // 여행 끝
         udPost.setHashtag(updatePost.getHashtag()); // 해시태그
+        udPost.setTheme(updatePost.getTheme()); //
         udPost.setUser(user);
 
         postRepository.save(udPost); // 업데이트로 쓰인 데이터들 repo 저장
@@ -194,21 +185,5 @@ public class PostServiceImpl implements PostService {
                 post.getLocation(),
                 post.getStartDate(),
                 post.getEndDate())).collect(Collectors.toList());
-//        for (Post post : postList) { // post 리스트를 postDto list 에 더해준다.
-//            result.add(new PostDto(
-//                    post.getId(),
-//                    // like
-//                    post.getLikes().size(),
-//                    // photo list 형식이니 stream
-//                    post.getPhotos().stream().map(i -> i.getPhoto().getStoreFileUrl()).collect(Collectors.toList()),
-//                    post.getTitle(),
-//                    post.getLocation(),
-//                    post.getStartDate(),
-//                    post.getEndDate())
-//            );
-//        }
-//        List<PostDto> postResult = result; // 그 담아진 결과 5개를 다시 담아서 리턴
-//        return postResult;
     }
-
 }
