@@ -279,22 +279,16 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public UserPostResponse getUserByPost(HttpServletRequest request) {
-        Page<Post> postPage = getPostList(request);
+    public UserPostResponse getUserByPost(HttpServletRequest request, String type, UserPostRequest parameter) {
+        Page<Post> postPage = getPostList(request, type, parameter);
+
         return UserPostResponse.build(postPage);
     }
 
 
-    @Override
-    public UserPostResponse getUserByLikePost(HttpServletRequest request) {
-//        Page<Post> postPage = getLikePostList(request);
-//        return UserPostResponse.build(postPage);
-        return null;
-    }
-
-
-    private Page<Post> getPostList(HttpServletRequest request) {
-        Pageable pageable = PageRequest.of(0, 10);
+    private Page<Post> getPostList(HttpServletRequest request, String type, UserPostRequest parameter) {
+        Pageable pageable = PageRequest.of(parameter.getPageNum(), 10);
+        Page<Post> postPage = null;
 
         String accessToken = jwtTokenProvider.resolveToken(request);
 
@@ -304,43 +298,16 @@ public class UserServiceImpl implements UserService {
         User user = memberRepository.findByEmail(authentication.getName())
                 .orElseThrow(() -> new RuntimeException("해당 유저가 없습니다."));
 
-        Page<Post> postPage = postRepository.findAllByUserId(user.getId(), pageable)
-                .orElse(null);
+        if(type.equals("list")) {
+            postPage = postRepository.findAllByUser_Id(user.getId(), pageable)
+                    .orElse(null);
+        } else if(type.equals("like")) {
+            postPage = postRepository.findAllByUserIdAndLikes(user.getId(), pageable)
+                    .orElse(null);
+        }
 
         return postPage;
     }
-
-    private Page<Post> getLikePostList(HttpServletRequest request) {
-        Pageable pageable = PageRequest.of(0, 10);
-
-        String accessToken = jwtTokenProvider.resolveToken(request);
-        Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
-
-        User user = memberRepository.findByEmail(authentication.getName())
-                .orElseThrow(() -> new RuntimeException("해당 유저가 없습니다."));
-
-
-        Page<Post> postPage = postRepository
-                .findAllByUserIdAndLikes(user.getId(), pageable)
-                .orElse(null);
-
-        return postPage;
-    }
-
-    //    private Page<Post> getLikePostList(HttpServletRequest request) {
-//        Pageable pageable = PageRequest.of(0, 10);
-//
-//        String accessToken = jwtTokenProvider.resolveToken(request);
-//        Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
-//
-//        User user = memberRepository.findByEmail(authentication.getName())
-//                .orElseThrow(() -> new RuntimeException("해당 유저가 없습니다."));
-//
-//        Page<Post> postPage = postRepository.findAllByUser_IdAndLikes(user.getId(), pageable)
-//                .orElse(null);
-//
-//        return postPage;
-//    }
 
 
 

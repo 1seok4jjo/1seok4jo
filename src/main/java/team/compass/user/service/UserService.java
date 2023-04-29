@@ -26,9 +26,8 @@ public interface UserService {
     void resetPassword(PasswordResetRequest parameter);
 
 
-    UserPostResponse getUserByPost(HttpServletRequest request);
+    UserPostResponse getUserByPost(HttpServletRequest request, String type, UserPostRequest parameter);
 
-    UserPostResponse getUserByLikePost(HttpServletRequest request);
 
     TokenDto reissue(TokenDto tokenRequestDto);
 }

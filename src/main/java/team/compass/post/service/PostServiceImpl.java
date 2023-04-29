@@ -24,14 +24,12 @@ import team.compass.post.repository.PostCustomRepository;
 import team.compass.post.repository.PostRepository;
 import team.compass.theme.domain.Theme;
 import team.compass.theme.repository.ThemeRepository;
-import team.compass.user.domain.RefreshToken;
 import team.compass.user.domain.User;
 import team.compass.user.repository.UserRepository;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -187,23 +185,5 @@ public class PostServiceImpl implements PostService {
                 post.getLocation(),
                 post.getStartDate(),
                 post.getEndDate())).collect(Collectors.toList());
-    }
-
-
-    @Override
-    public Post getUserByLikePost(HttpServletRequest request) {
-        Pageable pageable = PageRequest.of(0, 10);
-
-        String accessToken = jwtTokenProvider.resolveToken(request);
-
-        Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
-
-        User user = userRepository.findByEmail(authentication.getName())
-                .orElseThrow(() -> new RuntimeException("해당 유저가 없습니다."));
-
-//        Page post = postRepository.findAllByLikesUserId(user.getId(), pageable)
-//                .orElseThrow(() -> new RuntimeException("해당 글이 없습니다."));
-
-        return null;
     }
 }

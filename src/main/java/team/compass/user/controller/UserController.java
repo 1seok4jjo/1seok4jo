@@ -123,33 +123,12 @@ public class UserController {
     @GetMapping("/post/{type}")
     public ResponseEntity<?> getByUserPostList(
             @PathVariable String type,
+            @RequestBody UserPostRequest parameter,
             HttpServletRequest request
     ) {
-        UserPostResponse response = null;
-
-        if(type.equals("like")){
-            response = userService.getUserByLikePost(request);
-        }
+        UserPostResponse response = userService.getUserByPost(request, type, parameter);
 
         return ResponseUtils.ok("회원 좋아요 글 목록 조회에 성공했습니다.", response);
     }
 
-
-    // 해당 유저 작성 글 조회
-    @GetMapping("/post")
-    public ResponseEntity<?> getUserByPost(HttpServletRequest request) {
-        UserPostResponse postResponse = userService.getUserByPost(request);
-
-        if(ObjectUtils.isEmpty(postResponse)) {
-            return ResponseUtils.badRequest("작성 게시글 조회에 실패했습니다.");
-        }
-        return ResponseUtils.ok("해당 유저가 작성한 게시글 조회에 성공했습니다.", postResponse);
-    }
-
-    @GetMapping("/like-post")
-    public ResponseEntity<?> getUserLikeByPost(HttpServletRequest request) {
-        UserPostResponse postResponse = userService.getUserByLikePost(request);
-
-        return ResponseUtils.ok("해당 유저가 좋아요한 게시글 조회에 성공했습니다.", postResponse);
-    }
 }
