@@ -20,13 +20,6 @@ public interface PostService {
     Post update(Post param, List<MultipartFile> multipartFile, User user, Integer postId);
 
 
-//    void delete(Integer postId);
-
-    //    @Override
-//    @Transactional
-//    public void delete(Integer postId) {
-//        postRepository.deleteById(postId); // 삭제
-//    }
 
     @Transactional
     boolean delete(Integer postId, User user);
