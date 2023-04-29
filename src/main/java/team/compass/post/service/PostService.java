@@ -1,5 +1,6 @@
 package team.compass.post.service;
 
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,8 +34,6 @@ public interface PostService {
 
     PostResponse getPost(Integer postId);
 
-
-    Post getUserByLikePost(HttpServletRequest request);
 
     List<PostDto> themePageSelect(Integer themeId, Integer lastId);
 }
