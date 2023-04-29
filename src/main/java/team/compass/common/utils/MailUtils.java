@@ -45,8 +45,8 @@ public class MailUtils {
                                         .put(
                                                 Emailv31.Message.HTMLPART,
                                                 "<h2>안녕하세요." + user.getNickName() + "님!</h2>"
+                                                + "<p>" + user.getResetPasswordKey() + "</p>"
                                                 + "<p>비밀번호 초기화 코드입니다.<p>"
-                                                + "<p><" + user.getResetPasswordKey() + "></p>"
                                         )
                         )
                 );
@@ -63,3 +63,4 @@ public class MailUtils {
         }
     }
 }
+
