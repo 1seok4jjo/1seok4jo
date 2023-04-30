@@ -15,7 +15,7 @@ public interface UserService {
     User signUp(UserRequest.SignUp parameter, MultipartHttpServletRequest request);
     UserResponse signIn(UserRequest.SignIn parameter);
 
-    User updateUser(UserUpdate parameter, HttpServletRequest request);
+    User updateUser(UserUpdate parameter, HttpServletRequest request, MultipartHttpServletRequest multipartHttpServletRequest);
     void logout(HttpServletRequest request);
     void withdraw(HttpServletRequest request);
 

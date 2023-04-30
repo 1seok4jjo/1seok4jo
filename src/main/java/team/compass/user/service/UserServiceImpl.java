@@ -60,22 +60,8 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException("회원이 존재합니다.");
         }
 
-        if(!ObjectUtils.isEmpty(request.getFileMap())) {
-            Map<String, MultipartFile> multipartFileMap = request.getFileMap();
-
-            if(multipartFileMap.containsKey("profileImg")) {
-                parameter.setProfileImageUrl(savePhotos(multipartFileMap.get("profileImg")));
-            }
-
-            if(multipartFileMap.containsKey("bannerImg")) {
-                parameter.setUserBannerImgUrl(savePhotos(multipartFileMap.get("bannerImg")));
-            }
-        }
-
         parameter.setPassword(passwordEncoder.encode(parameter.getPassword()));
         parameter.setLoginType(UserSignUpType.NORMAL.getSignUpType());
-
-
 
         User user = memberRepository.save(UserRequest.SignUp.toEntity(parameter));
 
@@ -110,7 +96,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    public User updateUser(UserUpdate parameter, HttpServletRequest request) {
+    public User updateUser(
+            UserUpdate parameter,
+            HttpServletRequest request,
+            MultipartHttpServletRequest multipartHttpServletRequest
+    ) {
         String accessToken = jwtTokenProvider.resolveToken(request);
         User user = findUserByAccessToken(accessToken);
 
@@ -118,18 +108,23 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException("현재 비밀번호가 틀립니다.");
         }
 
-        Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
+        if(!ObjectUtils.isEmpty(multipartHttpServletRequest.getFileMap())) {
+            Map<String, MultipartFile> multipartFileMap = multipartHttpServletRequest.getFileMap();
 
-//        User user = memberRepository.findByEmail(authentication.getName())
-//                .orElseThrow(() -> new RuntimeException("로그인 유저 정보가 없습니다."));
-        User user1 = memberRepository.findByEmail(authentication.getName())
-                .orElseThrow(() -> new RuntimeException("로그인 유저 정보가 없습니다."));
+            if(multipartFileMap.containsKey("profileImg")) {
+                parameter.setUserProfileImgUrl(savePhotos(multipartFileMap.get("profileImg")));
+            }
+
+            if(multipartFileMap.containsKey("bannerImg")) {
+                parameter.setUserBannerImgUrl(savePhotos(multipartFileMap.get("bannerImg")));
+            }
+        }
 
         String encodedPassword = passwordEncoder.encode(parameter.getPassword());
 
         User updateUser = User.builder()
-                            .id(user1.getId())
-                            .email(user1.getEmail())
+                            .id(user.getId())
+                            .email(user.getEmail())
                             .password(encodedPassword)
                             .build();
 
