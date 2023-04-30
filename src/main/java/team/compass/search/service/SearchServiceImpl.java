@@ -23,11 +23,11 @@ public class SearchServiceImpl implements SearchService {
     private final int PAGE_ROW_COUNT = 10;
     private final SearchRepository searchRepository;
     @Override
-    public SearchResponse getSearchPostList(SearchRequest parameter) {
-        Page<Post> postList = getPostList(parameter);
+    public SearchResponse getSearchPostList(String type, String text) {
+        Page<Post> postList = getPostList(type, text);
 
         return SearchResponse.builder()
-                .keyword(parameter.getTitle())
+                .keyword(text)
                 .count(postList.getTotalElements())
                 .searchPostList(
                         postList.stream().map(item ->
@@ -44,20 +44,20 @@ public class SearchServiceImpl implements SearchService {
                 .build();
     }
 
-    private Page<Post> getPostList(SearchRequest parameter) {
-        Pageable pageable = PageRequest.of(parameter.getPageNum(), PAGE_ROW_COUNT);
+    private Page<Post> getPostList(String type, String text) {
+        Pageable pageable = PageRequest.of(0, PAGE_ROW_COUNT);
 
         Optional<Page<Post>> optionalPosts = null;
 
-        if(StringUtils.hasText(parameter.getTitle())){
+        if(type.equals("title")){
             optionalPosts = searchRepository
-                    .findAllByTitleContainingIgnoreCaseOrderByCreatedAtDesc(parameter.getTitle(), pageable);
-        } else if(StringUtils.hasText(parameter.getDetail())) {
+                    .findAllByTitleContainingIgnoreCaseOrderByCreatedAtDesc(text, pageable);
+        } else if(text.equals("detail")) {
             optionalPosts = searchRepository
-                    .findAllByDetailContainingIgnoreCaseOrderByCreatedAtDesc(parameter.getDetail(), pageable);
-        } else if(StringUtils.hasText(parameter.getHashtag())) {
+                    .findAllByDetailContainingIgnoreCaseOrderByCreatedAtDesc(text, pageable);
+        } else if(text.equals("hashtag")) {
             optionalPosts = searchRepository
-                    .findAllByHashtagContainingIgnoreCaseOrderByCreatedAtDesc(parameter.getHashtag(), pageable);
+                    .findAllByHashtagContainingIgnoreCaseOrderByCreatedAtDesc(text, pageable);
         }
 
         Page<Post> postPage = optionalPosts

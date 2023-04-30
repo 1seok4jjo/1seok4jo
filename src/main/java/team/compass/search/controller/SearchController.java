@@ -18,11 +18,13 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SearchController {
     private final SearchService searchService;
-    @GetMapping("/getList")
+    @GetMapping("/getList/{type}/{text}")
     public ResponseEntity<?> getSearchPost(
-            @RequestBody SearchRequest parameter
+//            @RequestBody SearchRequest parameter,
+            @PathVariable String type,
+            @PathVariable String text
     ) {
-        SearchResponse postList = searchService.getSearchPostList(parameter);
+        SearchResponse postList = searchService.getSearchPostList(type, text);
 
         return ResponseUtils.ok("게시글 검색 조회에 성공하였습니다.", postList);
     }
