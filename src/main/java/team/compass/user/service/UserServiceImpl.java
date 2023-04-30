@@ -126,6 +126,9 @@ public class UserServiceImpl implements UserService {
                             .id(user.getId())
                             .email(user.getEmail())
                             .password(encodedPassword)
+                            .introduction(parameter.getIntroduction())
+                            .userBannerImgUrl(parameter.getUserBannerImgUrl())
+                            .profileImageUrl(parameter.getUserProfileImgUrl())
                             .build();
 
         memberRepository.save(updateUser);

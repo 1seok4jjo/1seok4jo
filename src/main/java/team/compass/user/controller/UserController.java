@@ -50,7 +50,7 @@ public class UserController {
 
     @PutMapping("/update")
     public ResponseEntity<?> update(
-            @RequestBody UserUpdate parameter,
+            @RequestPart(name = "data") UserUpdate parameter,
             HttpServletRequest request
     ) {
         MultipartHttpServletRequest multipartHttpServletRequest = (MultipartHttpServletRequest) request;
