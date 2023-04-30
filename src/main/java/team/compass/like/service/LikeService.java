@@ -44,4 +44,31 @@ public class LikeService {
 
         return state;
     }
+
+
+
+    public boolean addLike(User user, Integer postId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("글 없음"));
+
+        if (isNotAlreadyLikes(user, post)) {
+            likeRepository.save(new Likes(post, user));
+            return true;
+        }
+        return false;
+    }
+
+    public void cancelLikes(User user, Integer postId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("글 없음"));
+
+        Likes likes = likeRepository.findByUserAndPost(user, post)
+                .orElseThrow(() -> new IllegalArgumentException("사용자나 글 조회가 안 됨. 또는 사용자 권한이 없음."));
+
+        likeRepository.delete(likes);
+    }
+
+    private boolean isNotAlreadyLikes(User user, Post post) {
+        return likeRepository.findByUserAndPost(user, post).isEmpty();
+    }
 }
