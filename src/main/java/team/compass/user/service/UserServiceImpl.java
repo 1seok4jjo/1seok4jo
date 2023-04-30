@@ -126,11 +126,16 @@ public class UserServiceImpl implements UserService {
                             .id(user.getId())
                             .email(user.getEmail())
                             .password(encodedPassword)
+                            .nickName(user.getNickName())
                             .introduction(parameter.getIntroduction())
                             .userBannerImgUrl(parameter.getUserBannerImgUrl())
                             .profileImageUrl(parameter.getUserProfileImgUrl())
+                            .emailAuthKey(user.getEmailAuthKey())
+                            .resetPasswordKey(user.getResetPasswordKey())
+                            .kakaoId(user.getKakaoId())
+                            .loginType(user.getLoginType())
+                            .roles(user.getRoles())
                             .build();
-
         memberRepository.save(updateUser);
 
         return updateUser;

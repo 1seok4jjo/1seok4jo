@@ -13,6 +13,7 @@ import team.compass.post.domain.Post;
 import team.compass.like.domain.Likes;
 import team.compass.post.domain.Post;
 import team.compass.user.dto.UserRequest;
+import team.compass.user.dto.UserUpdate;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -113,4 +114,5 @@ public class User extends BaseEntity implements UserDetails {
                 .nickName(parameter.getNickname())
                 .build();
     }
+
 }
