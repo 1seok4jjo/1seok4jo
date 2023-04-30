@@ -41,7 +41,7 @@ public class LikeController {
             result = likeService.addLike(user, postId);
 
         return result ?
-                ResponseUtils.ok("ÁÁ¾Æ¿ä µî·Ï ¼º°ø", "ok") : ResponseUtils.badRequest("ÁÁ¾Æ¿ä µî·Ï ½ÇÆĞ");
+                ResponseUtils.ok("ì¢‹ì•„ìš” ë“±ë¡ ì„±ê³µ", "ok") : ResponseUtils.badRequest("ì¢‹ì•„ìš” ë“±ë¡ ì‹¤íŒ¨");
     }
 
     @Transactional
@@ -53,7 +53,7 @@ public class LikeController {
         if (user != null) {
             likeService.cancelLikes(user, postId);
         }
-        return ResponseUtils.ok("ÁÁ¾Æ¿ä Ãë¼Ò ¼º°ø", "ok");
+        return ResponseUtils.ok("ì¢‹ì•„ìš” ì·¨ì†Œ ì„±ê³µ", "ok");
     }
 
 
@@ -62,7 +62,7 @@ public class LikeController {
         Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
         String userEmail = authentication.getName();
         User user = userRepository.findByEmail(userEmail)
-                .orElseThrow(() -> new IllegalArgumentException("À¯Àú ¾øÀ½"));
+                .orElseThrow(() -> new IllegalArgumentException("ìœ ì € ì—†ìŒ"));
         return user;
     }
 }
