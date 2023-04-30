@@ -49,13 +49,15 @@ public class SearchServiceImpl implements SearchService {
 
         Optional<Page<Post>> optionalPosts = null;
 
+        System.out.println(type);
+
         if(type.equals("title")){
             optionalPosts = searchRepository
                     .findAllByTitleContainingIgnoreCaseOrderByCreatedAtDesc(text, pageable);
-        } else if(text.equals("detail")) {
+        } else if(type.equals("detail")) {
             optionalPosts = searchRepository
                     .findAllByDetailContainingIgnoreCaseOrderByCreatedAtDesc(text, pageable);
-        } else if(text.equals("hashtag")) {
+        } else if(type.equals("hashtag")) {
             optionalPosts = searchRepository
                     .findAllByHashtagContainingIgnoreCaseOrderByCreatedAtDesc(text, pageable);
         }
