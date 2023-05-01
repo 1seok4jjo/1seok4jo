@@ -23,8 +23,8 @@ public class SearchServiceImpl implements SearchService {
     private final int PAGE_ROW_COUNT = 10;
     private final SearchRepository searchRepository;
     @Override
-    public SearchResponse getSearchPostList(SearchRequest parameter, String type, String text) {
-        Page<Post> postList = getPostList(parameter.getPageNum(), type, text);
+    public SearchResponse getSearchPostList(String pageNum, String type, String text) {
+        Page<Post> postList = getPostList(Integer.parseInt(pageNum), type, text);
 
         return SearchResponse.builder()
                 .keyword(text)
