@@ -9,15 +9,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import team.compass.common.config.JwtTokenProvider;
 import team.compass.common.utils.MailUtils;
-import team.compass.photo.domain.Photo;
 import team.compass.photo.repository.PhotoRepository;
 import team.compass.photo.service.FileUploadService;
-import team.compass.post.controller.response.PostResponse;
 import team.compass.post.domain.Post;
 import team.compass.post.dto.PhotoDto;
 import team.compass.post.repository.PostRepository;
@@ -30,7 +27,6 @@ import team.compass.user.repository.UserRepository;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -282,19 +278,16 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public UserPostResponse getUserByPost(HttpServletRequest request, String type, UserPostRequest parameter) {
-        Page<Post> postPage = getPostList(request, type, parameter);
+    public UserPostResponse getUserByPost(HttpServletRequest request, String type) {
+        List<Post> postList = getPostList(request, type);
 
-        return UserPostResponse.build(postPage);
+        return UserPostResponse.build(postList);
     }
 
 
-    private Page<Post> getPostList(HttpServletRequest request, String type, UserPostRequest parameter) {
-        Pageable pageable = PageRequest.of(parameter.getPageNum(), 10);
-        Page<Post> postPage = null;
-
+    private List<Post> getPostList(HttpServletRequest request, String type) {
+        List<Post> postList = null;
         String accessToken = jwtTokenProvider.resolveToken(request);
-
 
         Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
 
@@ -302,14 +295,14 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new RuntimeException("해당 유저가 없습니다."));
 
         if(type.equals("list")) {
-            postPage = postRepository.findAllByUser_Id(user.getId(), pageable)
+            postList = postRepository.findAllByUser_Id(user.getId())
                     .orElse(null);
         } else if(type.equals("like")) {
-            postPage = postRepository.findAllByUserIdAndLikes(user.getId(), pageable)
+            postList = postRepository.findAllByUserIdAndLikes(user.getId())
                     .orElse(null);
         }
 
-        return postPage;
+        return postList;
     }
 
 

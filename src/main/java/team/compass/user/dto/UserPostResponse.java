@@ -17,9 +17,9 @@ public class UserPostResponse {
     private Long count;
     private List<PostResponse> postResponseList;
 
-    public static UserPostResponse build(Page<Post> postPage) {
+    public static UserPostResponse build(List<Post> postPage) {
         return UserPostResponse.builder()
-                .count(postPage.getTotalElements())
+                .count((long) postPage.size())
                 .postResponseList(
                         postPage.stream().map(item ->
                             PostResponse.builder()

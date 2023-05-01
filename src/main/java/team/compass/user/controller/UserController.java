@@ -119,12 +119,11 @@ public class UserController {
     @GetMapping("/post/{type}")
     public ResponseEntity<?> getByUserPostList(
             @PathVariable String type,
-            @RequestBody UserPostRequest parameter,
             HttpServletRequest request
     ) {
-        UserPostResponse response = userService.getUserByPost(request, type, parameter);
+        UserPostResponse response = userService.getUserByPost(request, type);
 
-        return ResponseUtils.ok("회원 좋아요 글 목록 조회에 성공했습니다.", response);
+        return ResponseUtils.ok("회원 글 목록 조회에 성공했습니다.", response);
     }
 
 }
