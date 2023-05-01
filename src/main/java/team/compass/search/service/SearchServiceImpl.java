@@ -23,8 +23,8 @@ public class SearchServiceImpl implements SearchService {
     private final int PAGE_ROW_COUNT = 10;
     private final SearchRepository searchRepository;
     @Override
-    public SearchResponse getSearchPostList(String type, String text) {
-        Page<Post> postList = getPostList(type, text);
+    public SearchResponse getSearchPostList(SearchRequest parameter, String type, String text) {
+        Page<Post> postList = getPostList(parameter.getPageNum(), type, text);
 
         return SearchResponse.builder()
                 .keyword(text)
@@ -44,8 +44,8 @@ public class SearchServiceImpl implements SearchService {
                 .build();
     }
 
-    private Page<Post> getPostList(String type, String text) {
-        Pageable pageable = PageRequest.of(0, PAGE_ROW_COUNT);
+    private Page<Post> getPostList(Integer pageNum, String type, String text) {
+        Pageable pageable = PageRequest.of(pageNum, PAGE_ROW_COUNT);
 
         Optional<Page<Post>> optionalPosts = null;
 

@@ -20,11 +20,11 @@ public class SearchController {
     private final SearchService searchService;
     @GetMapping("/getList/{type}/{text}")
     public ResponseEntity<?> getSearchPost(
-//            @RequestBody SearchRequest parameter,
+            @RequestBody SearchRequest parameter,
             @PathVariable String type,
             @PathVariable String text
     ) {
-        SearchResponse postList = searchService.getSearchPostList(type, text);
+        SearchResponse postList = searchService.getSearchPostList(parameter, type, text);
 
         return ResponseUtils.ok("게시글 검색 조회에 성공하였습니다.", postList);
     }

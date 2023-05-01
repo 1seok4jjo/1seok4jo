@@ -10,9 +10,5 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SearchRequest {
-    private String title;
-    private String detail;
-    private String hashtag;
-
     private Integer pageNum;
 }
