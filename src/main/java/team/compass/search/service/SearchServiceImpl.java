@@ -36,7 +36,7 @@ public class SearchServiceImpl implements SearchService {
                                 .title(item.getTitle())
                                 .detail(item.getDetail())
                                 .hashtag(item.getHashtag())
-                                .location(item.getDetail())
+                                .location(item.getLocation())
                                 .createdAt(item.getCreatedAt())
                                 .build()
                         ).collect(Collectors.toList())
