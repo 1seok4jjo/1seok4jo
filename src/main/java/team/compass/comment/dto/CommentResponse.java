@@ -15,6 +15,7 @@ public class CommentResponse {
     private String content;
     private String imageUrl;
     private LocalDateTime createdTime;
+    private LocalDateTime updatedTime;
 
 
 
@@ -26,7 +27,8 @@ public class CommentResponse {
             .nickName(user.getNickName())
             .imageUrl(user.getProfileImageUrl())
             .content(comment.getContent())
-            .createdTime(comment.getCreatedTime());
+            .createdTime(comment.getCreatedTime())
+            .updatedTime(comment.getUpdateTime());
         return  builder.build();
     }
     public static CommentResponse fromEntity(Comment comment) {
@@ -37,7 +39,9 @@ public class CommentResponse {
             .nickName(comment.getUser().getNickName())
             .imageUrl(comment.getUser().getProfileImageUrl())
             .content(comment.getContent())
-            .createdTime(comment.getCreatedTime());
+            .createdTime(comment.getCreatedTime())
+            .updatedTime(comment.getUpdateTime());
+
         return  builder.build();
     }
 

@@ -7,6 +7,7 @@ import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import team.compass.comment.domain.Comment;
+import team.compass.comment.dto.CommentDeleteRequest;
 import team.compass.comment.dto.CommentRequest;
 import team.compass.comment.dto.CommentResponse;
 import team.compass.comment.repository.CommentRepository;
@@ -52,9 +53,7 @@ public class CommentService {
     //댓글수정
     public CommentResponse updateComment(Integer commentId, CommentRequest request) {
         Comment comment = commentRepository.findById(commentId)
-
             .orElseThrow(() -> new IllegalArgumentException("해당 댓글을 찾을 수 없습니다."));
-
 
         if (!comment.getUser().getId().equals(request.getUserId())) {
             throw new IllegalArgumentException("댓글은 댓글을 쓴 사람만 수정 할 수 있습니다.");
@@ -67,13 +66,11 @@ public class CommentService {
 
 
 //댓글 삭제
-    public boolean deleteComment(Integer commentId ,CommentRequest request) {
+    public boolean deleteComment(Integer commentId , CommentDeleteRequest request) {
         Comment comment = commentRepository.findById(commentId)
             .orElseThrow(() -> new IllegalArgumentException("해당 댓글을 찾을 수 없습니다."));
 
-
-
-        if (comment.getUser().getId().equals(request.getUserId())) {
+        if (!comment.getUser().getId().equals(request.getUserId())) {
             throw new IllegalArgumentException("댓글은 댓글을 쓴 사람만 삭제 할 수 있습니다.");
         }
         commentRepository.deleteById(commentId);

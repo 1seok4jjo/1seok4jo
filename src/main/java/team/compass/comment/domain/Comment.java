@@ -7,10 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import team.compass.post.domain.Post;
 import team.compass.user.domain.User;
-
-
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -18,7 +15,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Comment {
+public class Comment extends BaseEntity {
     @Id
     @Column(nullable = false,name = "comment_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,8 +29,6 @@ public class Comment {
     private String nickName;
     private String content;
     private String imageUrl;
-    private LocalDateTime createdTime;
-    private LocalDateTime updateTime;
     public void updateContent(String content) {
         this.content = content;
     }

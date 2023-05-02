@@ -49,6 +49,7 @@ public class LikeService {
 
     public boolean addLike(User user, Integer postId) {
         Post post = postRepository.findById(postId)
+
                 .orElseThrow(() -> new IllegalArgumentException("글 없음"));
 
         if (isNotAlreadyLikes(user, post)) {

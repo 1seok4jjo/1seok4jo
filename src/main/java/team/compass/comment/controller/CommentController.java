@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import team.compass.comment.dto.CommentDeleteRequest;
 import team.compass.comment.dto.CommentRequest;
 import team.compass.comment.dto.CommentResponse;
 import team.compass.comment.service.CommentService;
@@ -67,8 +68,9 @@ public class CommentController {
     }
 
     @DeleteMapping("/comment/{commentId}")
-    public ResponseEntity<Object> deleteComment(@PathVariable Integer commentId,CommentRequest commentRequest) {
-        boolean isDeleted = commentService.deleteComment(commentId, commentRequest);
+    public ResponseEntity<Object> deleteComment(@PathVariable Integer commentId,
+        @Valid@RequestBody CommentDeleteRequest commentDeleteRequest) {
+        boolean isDeleted = commentService.deleteComment(commentId, commentDeleteRequest);
        
         if (isDeleted) {
             return ResponseUtils.ok("댓글을 삭제하였습니다.", null);

@@ -53,7 +53,9 @@ public class LikeController {
         if (user != null) {
             likeService.cancelLikes(user, postId);
         }
+
         return ResponseUtils.ok("좋아요 취소 성공", "ok");
+
     }
 
 
@@ -62,6 +64,7 @@ public class LikeController {
         Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
         String userEmail = authentication.getName();
         User user = userRepository.findByEmail(userEmail)
+
                 .orElseThrow(() -> new IllegalArgumentException("유저 없음"));
         return user;
     }
