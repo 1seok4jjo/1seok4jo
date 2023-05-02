@@ -49,7 +49,8 @@ public class LikeService {
 
     public boolean addLike(User user, Integer postId) {
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new IllegalArgumentException("±Û ¾øÀ½"));
+
+                .orElseThrow(() -> new IllegalArgumentException("ê¸€ ì—†ìŒ"));
 
         if (isNotAlreadyLikes(user, post)) {
             likeRepository.save(new Likes(post, user));
@@ -60,10 +61,10 @@ public class LikeService {
 
     public void cancelLikes(User user, Integer postId) {
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new IllegalArgumentException("±Û ¾øÀ½"));
+                .orElseThrow(() -> new IllegalArgumentException("ê¸€ ì—†ìŒ"));
 
         Likes likes = likeRepository.findByUserAndPost(user, post)
-                .orElseThrow(() -> new IllegalArgumentException("»ç¿ëÀÚ³ª ±Û Á¶È¸°¡ ¾È µÊ. ¶Ç´Â »ç¿ëÀÚ ±ÇÇÑÀÌ ¾øÀ½."));
+                .orElseThrow(() -> new IllegalArgumentException("ì‚¬ìš©ìë‚˜ ê¸€ ì¡°íšŒê°€ ì•ˆ ë¨. ë˜ëŠ” ì‚¬ìš©ì ê¶Œí•œì´ ì—†ìŒ."));
 
         likeRepository.delete(likes);
     }
