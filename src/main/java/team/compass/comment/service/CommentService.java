@@ -1,6 +1,5 @@
 package team.compass.comment.service;
 
-
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
@@ -45,9 +44,9 @@ public class CommentService {
 
         List<Comment> commentList = commentRepository.findAllByPostId(postId);
 
-       return commentList.stream()
-           .map(CommentResponse::fromEntity)
-           .collect(Collectors.toList());
+        return commentList.stream()
+            .map(CommentResponse::fromEntity)
+            .collect(Collectors.toList());
     }
 
     //댓글수정
@@ -64,13 +63,12 @@ public class CommentService {
         return CommentResponse.fromEntity(comment);
     }
 
-
-//댓글 삭제
-    public boolean deleteComment(Integer commentId , CommentDeleteRequest request) {
+    //댓글 삭제
+    public boolean deleteComment(Integer commentId ,CommentRequest request) {
         Comment comment = commentRepository.findById(commentId)
             .orElseThrow(() -> new IllegalArgumentException("해당 댓글을 찾을 수 없습니다."));
 
-        if (!comment.getUser().getId().equals(request.getUserId())) {
+        if (comment.getUser().getId().equals(request.getUserId())) {
             throw new IllegalArgumentException("댓글은 댓글을 쓴 사람만 삭제 할 수 있습니다.");
         }
         commentRepository.deleteById(commentId);
