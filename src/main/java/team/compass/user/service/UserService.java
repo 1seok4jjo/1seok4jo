@@ -15,7 +15,7 @@ public interface UserService {
     User signUp(UserRequest.SignUp parameter, MultipartHttpServletRequest request);
     UserResponse signIn(UserRequest.SignIn parameter);
 
-    User updateUser(UserUpdate parameter, HttpServletRequest request);
+    User updateUser(UserUpdate parameter, HttpServletRequest request, MultipartHttpServletRequest multipartHttpServletRequest);
     void logout(HttpServletRequest request);
     void withdraw(HttpServletRequest request);
 
@@ -26,7 +26,7 @@ public interface UserService {
     void resetPassword(PasswordResetRequest parameter);
 
 
-    UserPostResponse getUserByPost(HttpServletRequest request, String type, UserPostRequest parameter);
+    UserPostResponse getUserByPost(HttpServletRequest request, String type);
 
 
     TokenDto reissue(TokenDto tokenRequestDto);

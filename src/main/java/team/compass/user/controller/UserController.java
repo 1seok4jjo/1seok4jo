@@ -2,10 +2,8 @@ package team.compass.user.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import team.compass.common.utils.ResponseUtils;
 import team.compass.user.domain.User;
@@ -13,9 +11,6 @@ import team.compass.user.dto.*;
 import team.compass.user.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
-import java.nio.file.attribute.UserPrincipal;
-import java.security.Principal;
-import java.util.Map;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/member")
@@ -55,11 +50,12 @@ public class UserController {
 
     @PutMapping("/update")
     public ResponseEntity<?> update(
-            @RequestBody UserUpdate parameter,
+            @RequestPart(name = "data") UserUpdate parameter,
             HttpServletRequest request
     ) {
+        MultipartHttpServletRequest multipartHttpServletRequest = (MultipartHttpServletRequest) request;
 
-        User user = userService.updateUser(parameter, request);
+        User user = userService.updateUser(parameter, request, multipartHttpServletRequest);
 
         if(ObjectUtils.isEmpty(user)) {
             return ResponseUtils.badRequest("해당 유저가 없습니다.");
@@ -123,12 +119,11 @@ public class UserController {
     @GetMapping("/post/{type}")
     public ResponseEntity<?> getByUserPostList(
             @PathVariable String type,
-            @RequestBody UserPostRequest parameter,
             HttpServletRequest request
     ) {
-        UserPostResponse response = userService.getUserByPost(request, type, parameter);
+        UserPostResponse response = userService.getUserByPost(request, type);
 
-        return ResponseUtils.ok("회원 좋아요 글 목록 조회에 성공했습니다.", response);
+        return ResponseUtils.ok("회원 글 목록 조회에 성공했습니다.", response);
     }
 
 }

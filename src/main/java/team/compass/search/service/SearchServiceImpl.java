@@ -23,11 +23,11 @@ public class SearchServiceImpl implements SearchService {
     private final int PAGE_ROW_COUNT = 10;
     private final SearchRepository searchRepository;
     @Override
-    public SearchResponse getSearchPostList(SearchRequest parameter) {
-        Page<Post> postList = getPostList(parameter);
+    public SearchResponse getSearchPostList(String pageNum, String type, String text) {
+        Page<Post> postList = getPostList(Integer.parseInt(pageNum), type, text);
 
         return SearchResponse.builder()
-                .keyword(parameter.getTitle())
+                .keyword(text)
                 .count(postList.getTotalElements())
                 .searchPostList(
                         postList.stream().map(item ->
@@ -36,7 +36,7 @@ public class SearchServiceImpl implements SearchService {
                                 .title(item.getTitle())
                                 .detail(item.getDetail())
                                 .hashtag(item.getHashtag())
-                                .location(item.getDetail())
+                                .location(item.getLocation())
                                 .createdAt(item.getCreatedAt())
                                 .build()
                         ).collect(Collectors.toList())
@@ -44,20 +44,22 @@ public class SearchServiceImpl implements SearchService {
                 .build();
     }
 
-    private Page<Post> getPostList(SearchRequest parameter) {
-        Pageable pageable = PageRequest.of(parameter.getPageNum(), PAGE_ROW_COUNT);
+    private Page<Post> getPostList(Integer pageNum, String type, String text) {
+        Pageable pageable = PageRequest.of(pageNum, PAGE_ROW_COUNT);
 
         Optional<Page<Post>> optionalPosts = null;
 
-        if(StringUtils.hasText(parameter.getTitle())){
+        System.out.println(type);
+
+        if(type.equals("title")){
             optionalPosts = searchRepository
-                    .findAllByTitleContainingIgnoreCaseOrderByCreatedAtDesc(parameter.getTitle(), pageable);
-        } else if(StringUtils.hasText(parameter.getDetail())) {
+                    .findAllByTitleContainingIgnoreCaseOrderByCreatedAtDesc(text, pageable);
+        } else if(type.equals("detail")) {
             optionalPosts = searchRepository
-                    .findAllByDetailContainingIgnoreCaseOrderByCreatedAtDesc(parameter.getDetail(), pageable);
-        } else if(StringUtils.hasText(parameter.getHashtag())) {
+                    .findAllByDetailContainingIgnoreCaseOrderByCreatedAtDesc(text, pageable);
+        } else if(type.equals("hashtag")) {
             optionalPosts = searchRepository
-                    .findAllByHashtagContainingIgnoreCaseOrderByCreatedAtDesc(parameter.getHashtag(), pageable);
+                    .findAllByHashtagContainingIgnoreCaseOrderByCreatedAtDesc(text, pageable);
         }
 
         Page<Post> postPage = optionalPosts

@@ -17,20 +17,26 @@ public class UserPostResponse {
     private Long count;
     private List<PostResponse> postResponseList;
 
-    public static UserPostResponse build(Page<Post> postPage) {
+    public static UserPostResponse build(List<Post> postList) {
         return UserPostResponse.builder()
-                .count(postPage.getTotalElements())
+                .count((long) postList.size())
                 .postResponseList(
-                        postPage.stream().map(item ->
+                        postList.stream().map(item ->
                             PostResponse.builder()
                                 .id(item.getId())
                                 .title(item.getTitle())
                                 .detail(item.getDetail())
-                                .hashtag(item.getHashtag())
                                 .location(item.getLocation())
                                 .createdAt(item.getCreatedAt())
-                                    .commentCount((long) item.getContents().size())
-                                    .likeCount(item.getLikes().size())
+                                .hashtag(item.getHashtag())
+                                .startDate(item.getStartDate())
+                                .endDate(item.getEndDate())
+                                .commentCount((long) item.getContents().size())
+                                .storeFileUrl(item.getPhotos().stream().map(i -> i.getPhoto().getStoreFileUrl()).collect(Collectors.toList()))
+                                .likeCount(item.getLikes().size())
+                                .themeId(item.getTheme().getId())
+                                .nickname(item.getUser().getNickName())
+                                .userProfileImage(item.getUser().getProfileImageUrl())
                                 .build()
                         ).collect(Collectors.toList())
                 )

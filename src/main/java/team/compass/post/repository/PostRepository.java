@@ -35,11 +35,11 @@ public interface PostRepository extends JpaRepository<Post,Integer> {
 
 
     // 해당 유저 작성 글 조회
-    Optional<Page<Post>> findAllByUserId(Integer user_id, Pageable pageable);
+    Optional<List<Post>> findAllByUser_Id(Integer id);
 
     // 해당 유저 좋아요 클릭한 글 조회
     @Query("select l.post from Likes l left join l.post where l.user.id = :user_id")
-    Optional<Page<Post>> findAllByUserIdAndLikes(@Param("user_id") Integer id, Pageable pageable);
+    Optional<List<Post>> findAllByUserIdAndLikes(@Param("user_id") Integer id);
 
 }
 
