@@ -14,6 +14,7 @@ public class CommentDto {
     private String content;
     private String imageUrl;
     private LocalDateTime createdTime;
+    private LocalDateTime updatedTime;
 
 
 
