@@ -5,9 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import team.compass.common.config.JwtTokenProvider;
 import team.compass.comment.repository.CommentRepository;
-import team.compass.like.repository.LikeRepository;
 import team.compass.photo.domain.Photo;
 import team.compass.photo.repository.PhotoRepository;
 import team.compass.photo.repository.PostPhotoRepository;
@@ -22,7 +20,6 @@ import team.compass.post.repository.PostRepository;
 import team.compass.theme.domain.Theme;
 import team.compass.theme.repository.ThemeRepository;
 import team.compass.user.domain.User;
-import team.compass.user.repository.UserRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,14 +45,6 @@ public class PostServiceImpl implements PostService {
     private final PostCustomRepository postCustomRepository;
 
     private final CommentRepository commentRepository;
-
-
-
-
-    private final JwtTokenProvider jwtTokenProvider;
-    private final UserRepository userRepository;
-
-    private final LikeRepository likeRepository;
 
 
     /**
