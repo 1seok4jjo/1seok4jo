@@ -60,7 +60,7 @@ public class PostController {
             @RequestPart(value = "data") PostRequest postRequest, // request post 로 받아오기. 내용들
             @RequestPart(value = "images") List<MultipartFile> images,
             HttpServletRequest request) { // 이미지 받아오기
-        User user = getUser(request);
+        User user = validationGetUser(request);
 
         validationPhoto(images); // 유효성 검증(이미지 최대 5개까지 받아올 수 있게)
 
@@ -85,7 +85,7 @@ public class PostController {
             @PathVariable Integer postId,
             HttpServletRequest request) { // 글 id 받기 위해
 
-        User user = getUser(request);
+        User user = validationGetUser(request);
         validationPhoto(images);
         Post updatePost = postService.update(getPostEntity(postRequest), images, user, postId); // 업데이트 받아온 것 저장
 
@@ -100,7 +100,7 @@ public class PostController {
     @DeleteMapping(value = "/post/{postId}")
     @Transactional
     public ResponseEntity<Object> postDelete(@PathVariable Integer postId,HttpServletRequest request) {
-        User user = getUser(request);
+        User user = validationGetUser(request);
         boolean isDeleted = postService.delete(postId,user);
         if (isDeleted) {
             return ResponseUtils.ok("글을 삭제하였습니다.", null);
@@ -123,7 +123,7 @@ public class PostController {
     }
 
 
-    private User getUser(HttpServletRequest request) {
+    private User validationGetUser(HttpServletRequest request) {
         String accessToken = jwtTokenProvider.resolveToken(request);
         Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
         String userEmail =  authentication.getName();
