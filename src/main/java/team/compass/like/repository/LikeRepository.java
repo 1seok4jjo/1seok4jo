@@ -16,5 +16,5 @@ public interface LikeRepository extends JpaRepository<Likes, Integer> {
     Optional<Likes> findAllByPost_IdAndUser_Id(Integer post_id,
                                                Integer user_id);
 
-    Optional<Likes> findByUserAndPost(User user, Post post);
+    Optional<Likes> findByUserIdAndPostId(Integer userId, Integer postId);
 }

@@ -2,15 +2,12 @@ package team.compass.post.service;
 
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import team.compass.common.config.JwtTokenProvider;
 import team.compass.comment.repository.CommentRepository;
+import team.compass.like.repository.LikeRepository;
 import team.compass.photo.domain.Photo;
 import team.compass.photo.repository.PhotoRepository;
 import team.compass.photo.repository.PostPhotoRepository;
@@ -27,7 +24,6 @@ import team.compass.theme.repository.ThemeRepository;
 import team.compass.user.domain.User;
 import team.compass.user.repository.UserRepository;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -58,6 +54,8 @@ public class PostServiceImpl implements PostService {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final UserRepository userRepository;
+
+    private final LikeRepository likeRepository;
 
 
     /**
@@ -167,14 +165,7 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional
     public List<PostDto> themePageSelect(Integer themeId, Integer lastId) {
-        // 테마 1 id == null
-        // fetch join 에는 limit 을 지원하지 않아서 따로 custom repository를 이용하여 sql 문으로 작성해 이용하기
         List<Post> postList = postCustomRepository.findByTheme(themeId, lastId); // themeId, LastId 추려서 post 가져오기 (이때 post select 1번)
-        List<PostDto> result = new ArrayList<>(); // postPhoto list 생성
-        // 1 벝 포스트 select like , photos select 문
-        // 2번 째
-        //...
-        // select -> in 쿼리로 (like를 묶어서 5개의 글 조회하는 것임. 현재 5개로 설정해둔 상태)
         return postList.stream().map(post -> new PostDto( // 📌멘토님의 제안안 stream 으로 반환하기. o
                 post.getId(),
                 // like

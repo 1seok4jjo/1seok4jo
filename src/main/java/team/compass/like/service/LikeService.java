@@ -1,5 +1,6 @@
 package team.compass.like.service;
 
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import team.compass.like.domain.Likes;
@@ -47,29 +48,26 @@ public class LikeService {
 
 
 
-    public boolean addLike(User user, Integer postId) {
-        Post post = postRepository.findById(postId)
-
+    public void addLike(Integer userId, Integer postId) {
+        postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("글 없음"));
-
-        if (isNotAlreadyLikes(user, post)) {
-            likeRepository.save(new Likes(post, user));
-            return true;
+        Optional<Likes> likes = likeRepository
+            .findByUserIdAndPostId(userId, postId);
+        if (likes.isPresent()) {
+            throw new IllegalArgumentException("이미 좋아요 등록");
         }
-        return false;
+        Likes entityLikes = likes.get();
+        likeRepository.save(entityLikes);
     }
 
     public void cancelLikes(User user, Integer postId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("글 없음"));
 
-        Likes likes = likeRepository.findByUserAndPost(user, post)
+        Likes likes = likeRepository.findByUserIdAndPostId(user.getId(), postId)
                 .orElseThrow(() -> new IllegalArgumentException("사용자나 글 조회가 안 됨. 또는 사용자 권한이 없음."));
-
         likeRepository.delete(likes);
     }
 
-    private boolean isNotAlreadyLikes(User user, Post post) {
-        return likeRepository.findByUserAndPost(user, post).isEmpty();
-    }
+
 }
