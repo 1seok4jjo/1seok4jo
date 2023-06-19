@@ -46,19 +46,4 @@ public class Photo {
 
     @OneToMany(mappedBy = "photo")
     private List<PostPhoto> postPhotos;
-
-    public Photo(String name, String storeFileUrl) {
-        this.name = name;
-        this.storeFileUrl = storeFileUrl;
-    }
-
-    public Photo toEntity() {
-        return Photo.builder()
-            .id(id)
-            .type(type)
-            .name(name)
-            .storeFileUrl(storeFileUrl)
-            .createdAt(createdAt)
-            .build();
-    }
 }

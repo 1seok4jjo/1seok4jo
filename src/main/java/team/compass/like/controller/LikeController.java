@@ -24,11 +24,6 @@ public class LikeController {
 
     private final JwtTokenProvider jwtTokenProvider;
 
-//    @PostMapping("/post/like")
-//    public void addLike(@RequestBody LikeDto likeDto, @PathVariable Integer id) {
-//        likeService.saveLike(likeDto);
-//    }
-
     @Transactional
     @PostMapping("/like/{postId}")
     public ResponseEntity<Object> addLike(

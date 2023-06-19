@@ -15,12 +15,9 @@ import team.compass.post.dto.PhotoDto;
 public class FileUploadService {
     private final AmazonS3ResourceStorage amazonS3ResourceStorage;
 
-    private final PhotoRepository photoRepository;
-
     public PhotoDto save(MultipartFile multipartFile) {
 
         PhotoDto fileDetail = PhotoDto.multipartOf(multipartFile);
-        String originalFilename = multipartFile.getOriginalFilename();
         String fileId = MultipartUtil.createFileId();
         String type = fileDetail.getType();
 
