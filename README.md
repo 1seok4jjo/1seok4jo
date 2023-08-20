@@ -50,7 +50,8 @@
 - 좋아요 취소
   - 자신이 눌렀던 좋아요 글을 좋아요 취소할 수 있습니다.
 ## ERD 
-![image](https://github.com/1seok4jjo/1seok4jo_Back/assets/119172260/06418630-19d9-45ff-b0e5-2a8b611f8f13)
+![image](https://github.com/1seok4jjo/1seok4jo_Back/assets/119172260/e722c491-0ba9-4afe-b682-963af1235e49)
+
 ## Architecture 
 
 ![image](https://github.com/1seok4jjo/1seok4jo_Back/assets/119172260/a36ed55e-e8ce-420f-a615-ad3a9ba7d80f)
