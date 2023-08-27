@@ -1,5 +1,6 @@
 # compass 🧭
-코로나 방역이 완화되고 날씨가 따뜻해지는 지금 여행을 떠나고 싶으신 분들에게 도움을 줄 수 있는 커뮤니티
+코로나 방역이 완화되고 날씨가 따뜻해지는 지금 여행을 떠나고 싶으신 분들에게 도움을 줄 수 있는 커뮤니티<br>
+[프로젝트 시연 영상 ](https://drive.google.com/file/d/1TbwsMCSeGHi0Du9lxwXTVvzyJ-tJADbO/view)
 
 # 프로젝트 기능 및 설계
 
